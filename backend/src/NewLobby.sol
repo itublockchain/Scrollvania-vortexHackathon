@@ -14,8 +14,11 @@ contract Lobby {
         Role role;
         uint256 votes;
     }
-
+    
+    uint public timeCounter;
     Player[] public players;
+
+    bool public gunduz = false;
 
     function createAccount(string memory _nickname, address _userID) external {}
 
@@ -30,5 +33,16 @@ contract Lobby {
             votes: 0
         });
         players.push(newPlayer);
+     
+     timeCounter = block.timestamp;
     }
+    
+    
+
+   
+    function kill() public {
+        require(timeCounter <= block.timestamp + 30 seconds, "Time has not passed yet");
+    }
+
+
 }
