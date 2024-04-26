@@ -1,113 +1,162 @@
+"use client";
 import Image from "next/image";
+import React, { useState } from "react";
+import Link from "next/link"; 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
+  const [lobbyCode, setLobbyCode] = useState(""); 
+  const [showPopup, setShowPopup] = useState(false); 
+
+  
+  const handleCreateLobby = () => {
+    const generatedCode = generateRandomCode(); 
+    setLobbyCode(generatedCode);
+    setShowPopup(true); 
+  };
+
+  
+  const generateRandomCode = () => {
+    const characters = "0123456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return code;
+  };
+
+  
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    handleJoinLobby(); 
+  };
+  
+  const handleJoinLobby = () => {
+    const inputCode = prompt("Lobi davet kodunu girin:");
+    if (inputCode === lobbyCode) {
+      window.location.href = `/lobby/${lobbyCode}`; 
+    } else {
+      alert("Hatalı lobi davet kodu!");
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <div className="bg-red-900 min-h-screen">
+        <div className="flex flex-col justify-center items-center space-y-10">
+          <h1 className="flex justify-center font-bold text-2xl pt-44">
+            Welcome to Scrollvania 🧛‍♂️
+          </h1>
+
+          <ConnectButton />
+
+          <div className="flex flex-row space-x-5">
+            
+            <button
+              onClick={handleCreateLobby}
+              className="bg-purple-900 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-2xl"
+            >
+              Lobi Oluştur
+            </button>
+
+            
+            <button
+              onClick={handleJoinLobby}
+              className="bg-purple-900 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-2xl"
+            >
+              Lobiye Katıl
+            </button>
+          </div>
+
+          
+          {showPopup && (
+            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white p-4 rounded-lg">
+                <p>Lobi davet kodu: {lobbyCode}</p>
+                <button
+                  onClick={handleClosePopup}
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-2xl mt-2"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="max-w-lg bg-indigo-900 p-8 rounded-lg shadow-md">
+            <h1 className="text-3xl font-bold text-center mb-8">
+              How to Play: Scrollvania
+            </h1>
+            <p className="text-lg mb-4">
+              Welcome to Scrollvania, a gripping game of strategy and deception
+              set in a cursed village!
+            </p>
+            <h2 className="text-xl font-semibold mb-4">Objective:</h2>
+            <p className="mb-4">
+              In Scrollvania, players are divided into two factions: the
+              Villagers and the Vampire. The Villagers&apos; goal is to identify
+              and eliminate the Vampire before they&apos;re all turned into
+              vampires themselves. The Vampire&apos;s objective is to convert
+              all the Villagers or avoid being identified and eliminated.
+            </p>
+            <h2 className="text-xl font-semibold mb-4">Game Setup:</h2>
+            <p className="mb-4">
+              <strong>Joining the Game:</strong> Players join Scrollvania by
+              depositing a certain amount of Ether (ETH) into the smart
+              contract.
+            </p>
+            <p className="mb-4">
+              <strong>Choosing Roles:</strong> At the beginning of each round,
+              players are randomly assigned the role of either a Villager or the
+              Vampire.
+            </p>
+            <p className="mb-4">
+              <strong>Swap Phase:</strong> Before the game begins, there is a
+              swap phase where players can engage in a swap transaction. The
+              player who pays the least gas fee becomes the Vampire, while the
+              player who pays the most becomes a Villager. This adds an element
+              of chance and strategy to the game.
+            </p>
+            <h2 className="text-xl font-semibold mb-4">Gameplay:</h2>
+            <p className="mb-4">
+              <strong>Daytime:</strong> During the day, players deliberate and
+              vote on who they believe is the Vampire. The player with the most
+              votes is lynched and eliminated from the game. If the Vampire is
+              successfully identified, the Villagers win the round. If not, the
+              game continues.
+            </p>
+            <p className="mb-4">
+              <strong>Nighttime:</strong> During the night, the Vampire selects
+              one player to convert into a vampire. The converted player is
+              eliminated from the game. The cycle of Daytime and Nighttime
+              continues until either all the Villagers are turned into vampires
+              (Vampire victory) or the Vampire is identified and eliminated
+              (Villager victory).
+            </p>
+            <h2 className="text-xl font-semibold mb-4">Win Conditions:</h2>
+            <p className="mb-4">
+              <strong>Villager Victory:</strong> The Villagers win if they
+              successfully identify and eliminate the Vampire.
+            </p>
+            <p className="mb-4">
+              <strong>Vampire Victory:</strong> The Vampire wins if all the
+              Villagers are turned into vampires.
+            </p>
+            <h2 className="text-xl font-semibold mb-4">Endgame:</h2>
+            <p className="mb-4">
+              The game ends when one of the win conditions is met. If the
+              Villagers win, the total Ether deposited by all players is evenly
+              distributed among the surviving Villagers. If the Vampire wins,
+              the Vampire claims the entire pot of Ether.
+            </p>
+            <p className="text-gray-600">
+              <strong>
+                Good luck, and may the best strategist prevail in Scrollvania!
+              </strong>
+            </p>
+          </div>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </>
   );
 }
