@@ -27,7 +27,7 @@ contract Lobby {
 
     function joinLobby(
         string memory _nickName
-    ) external payable returns (string memory) {
+    ) external payable {
         require(msg.value == 0.0001 ether, "Transaction failed");
         Player memory newPlayer = Player({
             nickname: _nickName,
@@ -44,30 +44,35 @@ contract Lobby {
     
     function vote(address target) public {
         require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
-        require(gunduz == true, "It is not night time");
+        require(gunduz == true, "It is not day time");
         require(playerMap[msg.sender].role != Role.None, "Only villagers can vote");
         require(playerMap[target].role != Role.None, "You can't vote for a player who is not in the game");
         playerMap[target].votes++;
         targets.push(target);
+        uint256 highestVote;
         for(uint i = 0; i < targets.length; i++){
-            if(targets[i] == target){
-                return;
+            if(playerMap[targets[i]].votes > playerMap[targets[i+1]].votes){
+                highestVote = playerMap[targets[i]].votes;
             }
         }
-        
+
+        for(uint i = 0; i < targets.length; i++){
+            if(playerMap[targets[i]].votes == highestVote){
+                playerMap[targets[i]].role = Role.None;
+            }
+        }
         
 
         timeCounter = block.timestamp;
         gunduz = !gunduz;
         emit timeUpdate();
        
-
     }
 
    
     function kill() public {
         require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
-        require(gunduz == false, "It is not day time");
+        require(gunduz == false, "It is not night time");
         timeCounter = block.timestamp;
         gunduz = !gunduz;
         emit timeUpdate();
