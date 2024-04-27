@@ -49,7 +49,7 @@ contract Lobby {
     HighestVote private highestVote;
 
     event vampireFound(address vampireAddress);
-    event gameStarted;
+    event gameStarted();
     event murdered(address victim);
 
     function joinLobby(

@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.19;
+
+contract Event {
+    event ev();
+    uint256 public count;
+
+    function throwEv() public {
+         count++;
+         emit ev();
+    }
+}
