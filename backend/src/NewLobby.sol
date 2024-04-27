@@ -56,7 +56,7 @@ contract Lobby {
         string memory _nickName
     ) external payable {
         require(msg.value == 0.0001 ether, "Transaction failed");
-        require(playerCount<10,"The lobby is full!";)
+        require(playerCount<10,"The lobby is full!");
 
         // rol atasana elemana
 
@@ -83,7 +83,7 @@ contract Lobby {
 
 
 
-            emit gameStarted;
+            emit gameStarted();
         }
     }
     
@@ -91,7 +91,7 @@ contract Lobby {
     function vote(address target) public countTime { //general voting function
         //require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet"); modifier added
         require(gunduz == true, "It is not day time");
-        require(playerMap[target].role != Role.None, "You can't vote for a player who is not in the game");
+        require(playerMap[target].role != Role.Dead, "You can't vote for a player who is not in the game");
         playerMap[target].votes++;
         targets.push(target);
         
@@ -107,13 +107,13 @@ contract Lobby {
 
     function dispatch() internal {//dispacth the villager with the highest vote
         
-        if(playerMap[highestVote.playerAddress].role==Role.Vampyre){
+        if(playerMap[highestVote.playerAddress].role==Role.Vampire){
             emit vampireFound(highestVote.playerAddress);
             return;
         }
         playerMap[highestVote.playerAddress].role=Role.Dead;
         highestVote.voteNumber=0;
-        highestVote.playerAddress="";
+        // highestVote.playerAddress="";
     }
     
     
@@ -121,7 +121,7 @@ contract Lobby {
        // require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
         require(gunduz == false, "It is not night time");
         require(playerMap[msg.sender].role == Role.Vampire, "Only vampires can kill");
-        require(playerMap[target].role != Role.None, "You can't kill a player who is not in the game");
+        require(playerMap[target].role != Role.Dead, "You can't kill a player who is not in the game");
       /*  playerMap[target].votes++;
         targets.push(target);
         for(uint i = 0; i < targets.length; i++){
