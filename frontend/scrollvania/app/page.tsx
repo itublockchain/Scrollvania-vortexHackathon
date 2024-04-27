@@ -3,6 +3,11 @@ import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useReadContract, useWatchContractEvent } from "wagmi";
+import { config } from "../utils/config";
+import { eventContractABI, eventContractAddress } from "../utils/constants";
+import { readContract } from "wagmi/actions";
+import { scrollSepolia } from "wagmi/chains";  
 
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -12,6 +17,34 @@ export default function Home() {
     const generatedCode = generateRandomCode();
     setLobbyCode(generatedCode);
     setShowPopup(true);
+  };
+
+  useWatchContractEvent({
+    address: eventContractAddress,
+    abi: eventContractABI,
+    eventName: "ev",
+    chainId: scrollSepolia.id,
+    config,
+    onLogs(logs) {
+      console.log("New logs!", logs);
+    },
+  });
+
+  // const result = useReadContract({
+  //   abi: eventContractABI,
+  //   address: eventContractAddress,
+  //   functionName: "count",
+  //   chainId: config.chains[0].id,
+  // }).then((result) => {console.log(result)});
+
+  const consoleResult = async () => {
+    const result = await readContract(config, {
+      abi: eventContractABI,
+      address: eventContractAddress,
+      functionName: 'count',
+      
+    })
+    console.log(result)
   };
 
   const generateRandomCode = () => {
@@ -55,7 +88,8 @@ export default function Home() {
             >
               How to Play
             </button>
-            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
+            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+            onClick={()=>consoleResult()}>
               Connect Wallet
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
