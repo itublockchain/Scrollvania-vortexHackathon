@@ -24,7 +24,7 @@ export default function Home() {
     abi: eventContractABI,
     eventName: "ev",
     chainId: scrollSepolia.id,
-    config,
+    
     onLogs(logs) {
       console.log("New logs!", logs);
     },
@@ -42,6 +42,7 @@ export default function Home() {
       abi: eventContractABI,
       address: eventContractAddress,
       functionName: 'count',
+      chainId: scrollSepolia.id,
       
     })
     console.log(result)

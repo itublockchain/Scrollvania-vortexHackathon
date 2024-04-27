@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import {config} from '../../utils/config';
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -24,22 +25,22 @@ import { WagmiProvider } from 'wagmi';
 
 const { wallets } = getDefaultWallets();
 
-const config = getDefaultConfig({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
-  wallets: [
-    ...wallets
-  ],
-  chains: [
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    base,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
-  ],
-  ssr: true,
-});
+// const config = getDefaultConfig({
+//   appName: 'RainbowKit demo',
+//   projectId: 'YOUR_PROJECT_ID',
+//   wallets: [
+//     ...wallets
+//   ],
+//   chains: [
+//     mainnet,
+//     polygon,
+//     optimism,
+//     arbitrum,
+//     base,
+//     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
+//   ],
+//   ssr: true,
+// });
 
 const queryClient = new QueryClient();
 
