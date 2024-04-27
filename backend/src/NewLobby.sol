@@ -54,7 +54,7 @@ contract Lobby {
      }
     }
     
-    internal HighestVote highestVote;
+    HighestVote private highestVote;
     function vote(address target) public countTime { //general voting function
         //require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet"); modifier added
         require(gunduz == true, "It is not day time");
@@ -62,9 +62,9 @@ contract Lobby {
         playerMap[target].votes++;
         targets.push(target);
         
-        highestVote.voteNumber=max(highestVote.voteNumber, playerMap[target].votes);
-        if(highestVote.voteNumber==playerMap[target].votes){
-            highestVote.playerAddress=target;
+        if(playerMap[target].votes > highestVote.voteNumber){
+            highestVote.voteNumber = playerMap[target].votes;
+            highestVote.playerAddress = target;
         }
 
 
@@ -102,22 +102,21 @@ contract Lobby {
     }
     
     
-    function kill() public countTime{
+    function kill(address target) public countTime{
        // require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
         require(gunduz == false, "It is not night time");
         require(playerMap[msg.sender].role == Role.Vampyre, "Only vampyres can vote");
         require(playerMap[target].role != Role.None, "You can't vote for a player who is not in the game");
         playerMap[target].votes++;
         targets.push(target);
-        uint256 highestVote;
         for(uint i = 0; i < targets.length; i++){
             if(playerMap[targets[i]].votes > playerMap[targets[i+1]].votes){
-                highestVote = playerMap[targets[i]].votes;
+                highestVote.voteNumber = playerMap[targets[i]].votes;
             }
         }
 
         for(uint i = 0; i < targets.length; i++){
-            if(playerMap[targets[i]].votes == highestVote){
+            if(playerMap[targets[i]].votes == highestVote.voteNumber){
                 playerMap[targets[i]].role = Role.None;
             }
         }
