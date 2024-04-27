@@ -6,7 +6,7 @@ pragma solidity ^0.8.13;
 
     oyları sıfırla - bunu bilmiyorum
     oyunu başlatan fonksiyon
-    vampiri ata - Tamamlandı
+    vampiri ata - nickname kullanarak random atama yapmayı çözmemiz gerekiyor
     oylamayı başlat - Bununla oyunu başlatan fonksiyon aynı 
     target addressten stringe dönecek-
 
@@ -30,14 +30,14 @@ contract Lobby {
 
     struct HighestVote{
         uint256 voteNumber;
-        address playerAddress;
+        string playerNickname;
     }
 
     event timeUpdate();
     address[] public targets;
     uint public timeCounter;
     Player[] public players;
-    mapping(address => Player) public playerMap;
+    mapping(string => Player) private playerMap;
     uint256 public playerCount;
 
     modifier countTime {
@@ -48,9 +48,10 @@ contract Lobby {
     bool public gunduz = false;
     HighestVote private highestVote;
 
-    event vampireFound(address vampireAddress);
+    event vampireFound(string memory vampireNickname);
     event gameStarted();
-    event murdered(address victim);
+    event murdered(string memory victim);
+    event Dispacth(string memory suspect);
 
     function joinLobby(
         string memory _nickName
@@ -58,26 +59,20 @@ contract Lobby {
         require(msg.value == 0.0001 ether, "Transaction failed");
         require(playerCount<10,"The lobby is full!");
 
-        // rol atasana elemana
-
-
-        Player memory newPlayer = Player({
+            Player memory newPlayer = Player({
             nickname: _nickName,
-            userID: msg.sender,
+            userAddress: msg.sender,
             role: Role.Villager,
             votes: 0
         });
         // players.push(newPlayer);
-        playerMap[msg.sender] = newPlayer;
+        playerMap[newPlayer.nickname] = newPlayer;
         playerCount++;
      
-     /*timeCounter = block.timestamp;
-     if(players.length == 10){
-        //fonksiyon döndür
-     }*/ 
+     
         if(playerCount==10){
             // oyunu başlat
-            uint randNum = block.timestamp;
+            uint randNum = block.timestamp; //burası olmaz çözüm bulmak gerekiyor
             players[randNum%2+1].role =Role.Vampire;
             players[randNum%2].role = Role.Vampire;
             emit gameStarted();
@@ -85,7 +80,7 @@ contract Lobby {
     }
     
     
-    function vote(address target) public countTime { //general voting function
+    function vote(string memory target) public countTime { //general voting function
         //require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet"); modifier added
         require(gunduz == true, "It is not day time");
         require(playerMap[target].role != Role.Dead, "You can't vote for a player who is not in the game");
@@ -94,7 +89,7 @@ contract Lobby {
         
         if(playerMap[target].votes > highestVote.voteNumber){
             highestVote.voteNumber = playerMap[target].votes;
-            highestVote.playerAddress = target;
+            highestVote.playerNickname = target;
         }
         timeCounter = block.timestamp;
         gunduz = !gunduz;
@@ -104,20 +99,21 @@ contract Lobby {
 
     function dispatch() internal {//dispacth the villager with the highest vote
         
-        if(playerMap[highestVote.playerAddress].role==Role.Vampire){
-            emit vampireFound(highestVote.playerAddress);
+        if(playerMap[highestVote.playerNickname].role==Role.Vampire){
+            emit vampireFound(highestVote.playerNickname);
             return;
+            //eğer iki vampir de bulunduysa oyunu bitir
         }
-        playerMap[highestVote.playerAddress].role=Role.Dead;
+        playerMap[highestVote.playerNickname].role=Role.Dead;
         highestVote.voteNumber=0;
-        // highestVote.playerAddress="";
+        emit Dispacth(highestVote.playerNickname);
     }
     
     
-    function kill(address target) private countTime{
+    function kill( string memory target, string memory vampire) private countTime{
        // require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
         require(gunduz == false, "It is not night time");
-        require(playerMap[msg.sender].role == Role.Vampire, "Only vampires can kill");
+        require(playerMap[vampire].role == Role.Vampire, "Only vampires can kill");
         require(playerMap[target].role != Role.Dead, "You can't kill a player who is not in the game");
       /*  playerMap[target].votes++;
         targets.push(target);
