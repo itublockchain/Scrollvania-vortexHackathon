@@ -4,11 +4,11 @@ pragma solidity ^0.8.13;
 
 /*Yapılacaklar
 
-    oyları sıfırla
+    oyları sıfırla - bunu bilmiyorum
     oyunu başlatan fonksiyon
-    vampiri ata
-    oylamayı başlat
-
+    vampiri ata - Tamamlandı
+    oylamayı başlat - Bununla oyunu başlatan fonksiyon aynı 
+    target addressten stringe dönecek-
 
 
  */
@@ -79,10 +79,7 @@ contract Lobby {
             // oyunu başlat
             uint randNum = block.timestamp;
             players[randNum%2+1].role =Role.Vampire;
-            players[randNum].role = Role.Vampire;
-
-
-
+            players[randNum%2].role = Role.Vampire;
             emit gameStarted();
         }
     }
