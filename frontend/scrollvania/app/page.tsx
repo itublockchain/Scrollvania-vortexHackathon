@@ -1,21 +1,19 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import Link from "next/link"; 
+import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
-  const [lobbyCode, setLobbyCode] = useState(""); 
-  const [showPopup, setShowPopup] = useState(false); 
+  const [lobbyCode, setLobbyCode] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
-  
   const handleCreateLobby = () => {
-    const generatedCode = generateRandomCode(); 
+    const generatedCode = generateRandomCode();
     setLobbyCode(generatedCode);
-    setShowPopup(true); 
+    setShowPopup(true);
   };
 
-  
   const generateRandomCode = () => {
     const characters = "0123456789";
     let code = "";
@@ -25,16 +23,10 @@ export default function Home() {
     return code;
   };
 
-  
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    handleJoinLobby(); 
-  };
-  
   const handleJoinLobby = () => {
     const inputCode = prompt("Lobi davet kodunu girin:");
     if (inputCode === lobbyCode) {
-      window.location.href = `/lobby/${lobbyCode}`; 
+      window.location.href = `/lobby/${lobbyCode}`;
     } else {
       alert("Hatalı lobi davet kodu!");
     }
@@ -42,48 +34,71 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg-red-900 min-h-screen">
-        <div className="flex flex-col justify-center items-center space-y-10">
-          <h1 className="flex justify-center font-bold text-2xl pt-44">
+      <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover ">
+        <h3 className="text-8xl flex justify-center pt-14 text-white opacity-85 font-extrabold">
+          Welcome to Scrollvania
+        </h3>
+        <div className="flex flex-row justify-evenly items-center ">
+          <div className="w-96 h-[500px] bg-white rounded-3xl opacity-80 flex flex-col"></div>
+          <Image
+            src={"/vampir.png"}
+            alt="Vampir"
+            width={400}
+            height={1000}
+            className="flex flex-col pt-[171px]"
+          />
+
+          <div className="flex flex-col justify-center items-center space-y-28">
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => setShowPopup(true)}
+            >
+              How to Play
+            </button>
+            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
+              Connect Wallet
+            </button>
+            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
+              Join Lobby
+            </button>
+          </div>
+        </div>
+        {/* <h1 className="flex justify-center font-bold text-2xl pt-44">
             Welcome to Scrollvania 🧛‍♂️
-          </h1>
+          </h1> */}
 
-          <ConnectButton />
+        {/* <ConnectButton /> */}
 
-          <div className="flex flex-row space-x-5">
-            
+        {/* <div className="flex flex-row space-x-5">
             <button
               onClick={handleCreateLobby}
               className="bg-purple-900 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-2xl"
             >
               Lobi Oluştur
-            </button>
+            </button> */}
 
-            
-            <button
+        {/* <button
               onClick={handleJoinLobby}
               className="bg-purple-900 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-2xl"
             >
               Lobiye Katıl
             </button>
-          </div>
+          </div> */}
 
-          
-          {showPopup && (
-            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white p-4 rounded-lg">
-                <p>Lobi davet kodu: {lobbyCode}</p>
-                <button
-                  onClick={handleClosePopup}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-2xl mt-2"
-                >
-                  Kapat
-                </button>
-              </div>
+        {showPopup && (
+          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded-lg">
+              <button
+                onClick={() => setShowPopup(false)}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-2xl mt-2"
+              >
+                Kapat
+              </button>
             </div>
-          )}
+          </div>
+        )}
 
-          <div className="max-w-lg bg-indigo-900 p-8 rounded-lg shadow-md">
+        {/* <div className="max-w-lg bg-indigo-900 p-8 rounded-lg shadow-md">
             <h1 className="text-3xl font-bold text-center mb-8">
               How to Play: Scrollvania
             </h1>
@@ -154,8 +169,7 @@ export default function Home() {
                 Good luck, and may the best strategist prevail in Scrollvania!
               </strong>
             </p>
-          </div>
-        </div>
+          </div> */}
       </div>
     </>
   );

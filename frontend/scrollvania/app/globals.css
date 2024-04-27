@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 body {
-  min-height: 200vh;
-  height: 150vh;
-  background-color:rgb(127 29 29);
+  min-height: 100vh;
+  height: 100vh;
+  /* background-color:rgb(127 29 29); */
+  margin: 0;
+  padding: 0;
 }
