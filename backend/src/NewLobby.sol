@@ -23,7 +23,7 @@ contract Lobby {
 
     struct Player {
         string nickname;
-        address userID;
+        address userAddress;
         Role role;
         uint256 votes;
     }
@@ -34,7 +34,7 @@ contract Lobby {
     }
 
     event timeUpdate();
-    address[] public targets;
+    string[] public targets;
     uint public timeCounter;
     Player[] public players;
     mapping(string => Player) private playerMap;
@@ -48,10 +48,10 @@ contract Lobby {
     bool public gunduz = false;
     HighestVote private highestVote;
 
-    event vampireFound(string memory vampireNickname);
+    event vampireFound(string vampireNickname);
     event gameStarted();
-    event murdered(string memory victim);
-    event Dispacth(string memory suspect);
+    event murdered(string victim);
+    event Dispacth(string suspect);
 
     function joinLobby(
         string memory _nickName
