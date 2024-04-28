@@ -5,12 +5,13 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useReadContract, useWatchContractEvent } from "wagmi";
 import { config } from "../utils/config";
-import { bundlerClient,getGasPrice,entryPointContract, } from "../utils/helpers";
+import { bundlerClient,getGasPrice,entryPointContract,incrementFuncData } from "../utils/helpers";
 
 import {
   entryPointABI,
   eventContractABI,
   eventContractAddress,
+  gameAccountABI,
 } from "../utils/constants";
 import { readContract, writeContract } from "wagmi/actions";
 import { scrollSepolia } from "wagmi/chains";
@@ -52,7 +53,7 @@ export default function Home() {
       address: ENTRYPOINT_ADDRESS_V07,
       functionName: "depositTo",
       chainId: scrollSepolia.id,
-      args: ["0xD7f1cc89aA56Bf4078bb6D30569805bB93128d0A"],
+      args: ["0x581d0b761C28F1daE307A57CCd6e61ebD52c734d"],
       value: parseEther("0.1"),
     });
   };
@@ -66,19 +67,28 @@ export default function Home() {
     });
     console.log(result);
   };
+  const consoleCount = async () => {
+    const result = await readContract(config, {
+      abi: gameAccountABI,
+      address: "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
+      functionName: "count",
+      chainId: scrollSepolia.id,
+    });
+    console.log(result);
+  };
 
   const incrementOP = async () => {
-    let nonce = await entryPointContract.read.getNonce(["", 0]);
+    let nonce = await entryPointContract.read.getNonce(["0x581d0b761C28F1daE307A57CCd6e61ebD52c734d", 0]);
     let gasPrice = await getGasPrice();
     
-    const senderAddress = await calculateSenderAddress(factoryData);
+    // const senderAddress = await calculateSenderAddress(factoryData);
 
     const userOperationHash = await bundlerClient.sendUserOperation({
       userOperation: {
-        sender: senderAddress,
+        sender: "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
         nonce: BigInt(nonce),
         
-        callData: "0x" as Hex,
+        callData: incrementFuncData as Hex,
         maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
         maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
         paymasterVerificationGasLimit: BigInt(1000000),
@@ -163,6 +173,18 @@ export default function Home() {
               onClick={() => fundEntryPoint()}
             >
               FundMe
+            </button>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => consoleCount()}
+            >
+              Count
+            </button>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => incrementOP()}
+            >
+              Increment
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
               Join Lobby

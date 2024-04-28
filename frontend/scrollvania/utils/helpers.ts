@@ -30,12 +30,11 @@ import {
 } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { gnosisChiado } from "viem/chains";
-  import {
-    
-      entryPointABI,
-    gameAccountFactoryABI,
-
-  } from "../utils/constants";
+import {
+  entryPointABI,
+  gameAccountFactoryABI,
+  gameAccountABI,
+} from "../utils/constants";
 import dynamic from "next/dynamic";
 import { privateKeyToSimpleSmartAccount } from "permissionless/accounts";
 import { readContract } from "@wagmi/core";
@@ -45,7 +44,7 @@ import { config } from "./config";
 const endpointUrl =
   "https://api.pimlico.io/v2/534351/rpc?apikey=0d1005ee-02d9-4836-810d-27d08cceb39b";
 
-const AF_ADDRESS = "0xccB5a2D19A67a1a5105F674465CAe2c5Ab1496Ac";
+const AF_ADDRESS = "0xaB0BFe7fC32bb98fD6FdeC3755ec3E78A2980121";
 
 export const walletClient = createWalletClient({
   chain: gnosisChiado,
@@ -72,31 +71,19 @@ export const factory = AF_ADDRESS;
 export const factoryData = encodeFunctionData({
   abi: gameAccountFactoryABI,
   functionName: "createAccount",
-  args: ["0x633aDfb3430b96238c9FB7026195D1d5b0889EA6", "Emirhan CAVUSOGLU"],
+  args: ["0x633aDfb3430b96238c9FB7026195D1d5b0889EA6", "Emirhan"],
 });
 
-// export const createTSD = encodeFunctionData({
-//   abi: accountABI,
-//   functionName: "createTSD",
-//   args: ["bok", "bok açıklama", "uri falan filan"],
-// });
-// export const attestTSD = encodeFunctionData({
-//   abi: accountABI,
-//   functionName: "attestTSD",
-// });
+export const incrementFuncData = encodeFunctionData({
+  abi: gameAccountABI,
+  functionName: "increment",
+});
 
-  export const entryPointContract = getContract({
-    address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
-    abi: entryPointABI,
-    client: publicClient,
-
-  });
-
-// export const accountContract = getContract({
-//   address: "0x95dcB08D52Fe1D79dd6F6D159C28798D7C4656E9",
-//   abi: accountABI,
-//   client: publicClient,
-// });
+export const entryPointContract = getContract({
+  address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
+  abi: entryPointABI,
+  client: publicClient,
+});
 
 export const factoryContract = getContract({
   address: AF_ADDRESS,
@@ -114,33 +101,6 @@ export const getFactoryData = async (address: any, alias: any) => {
   return factoryData;
 };
 
-// export const getCreateTSD = async (proofName, proofDescription, ipfsUrl) => {
-//   const createTSD = encodeFunctionData({
-//     abi: accountABI,
-//     functionName: "createTSD",
-//     args: [proofName, proofDescription, ipfsUrl],
-//   });
-//   return createTSD;
-// };
-
-// export const getAccountContract = async (address: any) => {
-//   const accountContract = getContract({
-//     address: address,
-//     abi: accountABI,
-//     client: publicClient,
-//   });
-//   return accountContract;
-// };
-
-export const getTSDContract = async (address: any) => {
-  const tsdContract = getContract({
-    address: address,
-    abi: tsdABI,
-    client: publicClient,
-  });
-  return tsdContract;
-};
-
 export const getGasPrice = async () => {
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
   return gasPrice;
@@ -153,26 +113,3 @@ export const calculateSenderAddress = async (factoryData) => {
   });
   return senderAddress;
 };
-
-
-
-
-
-// const fundAccount = async () => {
-//     // const fund = await entryPointContract.write.depositTo([accountAddress],parseEther("0.01"));
-//     // console.log(fund);
-//     const factoryData = await getFactoryData(
-//       primaryWallet?.address,
-//       user?.alias
-//     );
-//     const { request } = await publicClient.simulateContract({
-//       account: primaryWallet?.address,
-//       address: ENTRYPOINT_ADDRESS_V07,
-//       abi: entryPointABI,
-//       functionName: 'depositTo',
-//       args: [await calculateSenderAddress(factoryData)],
-//       value: parseEther("0.2"),
-//     })
-//     const fund =await walletClient.writeContract(request)
-//     console.log(fund)
-//   }

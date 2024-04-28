@@ -10,7 +10,7 @@ contract GameAccount is IAccount {
     
     uint256 public count;
     address public owner;
-    string public userName = "Emojan";
+    string public userName ;
     
 
     constructor(address _owner, string memory _userName) {
