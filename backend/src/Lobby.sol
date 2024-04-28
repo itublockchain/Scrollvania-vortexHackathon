@@ -4,12 +4,7 @@ pragma solidity ^0.8.13;
 
 /*Yapılacaklar
 
-    oyları sıfırla - bunu bilmiyorum
-    oyunu başlatan fonksiyon
-    vampiri ata - nickname kullanarak random atama yapmayı çözmemiz gerekiyor
-    oylamayı başlat - Bununla oyunu başlatan fonksiyon aynı 
-    target addressten stringe dönecek-
-
+    oyları sıfırla - bunu bilmiyorum 
 
  */
 
@@ -38,7 +33,10 @@ contract Lobby {
     uint public timeCounter;
     Player[] public players;
     mapping(string => Player) private playerMap;
+    mapping(address => Player) private addresstoplayerMap;
     uint256 public playerCount;
+    uint256 public voteCount;
+    uint256 public vampireCount = 2;
 
     modifier countTime {
         require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
@@ -65,16 +63,17 @@ contract Lobby {
             role: Role.Villager,
             votes: 0
         });
-        // players.push(newPlayer);
+        players.push(newPlayer);
         playerMap[newPlayer.nickname] = newPlayer;
+        addresstoplayerMap[msg.sender] = newPlayer;
         playerCount++;
      
      
         if(playerCount==10){
-            // oyunu başlat
+            timeCounter = block.timestamp;
             uint randNum = block.timestamp; //burası olmaz çözüm bulmak gerekiyor
-            players[randNum%2+1].role =Role.Vampire;
-            players[randNum%2].role = Role.Vampire;
+            playerMap[players[randNum%9+1].nickname].role=Role.Vampire;
+            playerMap[players[randNum%9].nickname].role=Role.Vampire;
             emit gameStarted();
         }
     }
@@ -85,16 +84,24 @@ contract Lobby {
         require(gunduz == true, "It is not day time");
         require(playerMap[target].role != Role.Dead, "You can't vote for a player who is not in the game");
         playerMap[target].votes++;
+        voteCount++;
         targets.push(target);
         
         if(playerMap[target].votes > highestVote.voteNumber){
             highestVote.voteNumber = playerMap[target].votes;
             highestVote.playerNickname = target;
         }
+        if(voteCount == playerCount){
+            if(playerMap[highestVote.playerNickname].role == Role.Vampire){
+                vampireCount--;
+            }
+            playerMap[highestVote.playerNickname].role = Role.Dead;
+            playerCount--;
+            voteCount = 0;
         timeCounter = block.timestamp;
         gunduz = !gunduz;
         emit timeUpdate();
-       
+       }
     }
 
     function dispatch() internal {//dispacth the villager with the highest vote
@@ -110,11 +117,16 @@ contract Lobby {
     }
     
     
-    function kill( string memory target, string memory vampire) private countTime{
+    function kill( string memory target) private countTime{
        // require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
         require(gunduz == false, "It is not night time");
-        require(playerMap[vampire].role == Role.Vampire, "Only vampires can kill");
+        require(addresstoplayerMap[msg.sender].role == Role.Vampire, "Only vampires can kill");
         require(playerMap[target].role != Role.Dead, "You can't kill a player who is not in the game");
+        require(playerMap[target].role != Role.Vampire,"You can't kill a vampire");
+        playerMap[target].votes++;
+        voteCount++;
+        targets.push(target);
+
       /*  playerMap[target].votes++;
         targets.push(target);
         for(uint i = 0; i < targets.length; i++){
@@ -129,13 +141,19 @@ contract Lobby {
             }
         }
         */
+       if(playerMap[target].votes > highestVote.voteNumber){
+            highestVote.voteNumber = playerMap[target].votes;
+            highestVote.playerNickname = target;
+        }
 
-
-        playerMap[target].role=Role.Dead;
-        emit murdered(target);
+       if(voteCount == vampireCount){
+            playerMap[highestVote.playerNickname].role = Role.Dead;
+            playerCount--;
+            voteCount = 0;
         timeCounter = block.timestamp;
-        gunduz == gunduz;
+        gunduz = gunduz;
         emit timeUpdate();
+       }
         
     }
 
