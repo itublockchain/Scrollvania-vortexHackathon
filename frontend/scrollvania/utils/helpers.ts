@@ -32,6 +32,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { gnosisChiado } from "viem/chains";
   import {
     
+      entryPointABI,
     gameAccountFactoryABI,
 
   } from "../utils/constants";
@@ -84,12 +85,12 @@ export const factoryData = encodeFunctionData({
 //   functionName: "attestTSD",
 // });
 
-//   export const entryPointContract = getContract({
-//     address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
-//     abi: entryPointABI,
-//     client: publicClient,
+  export const entryPointContract = getContract({
+    address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
+    abi: entryPointABI,
+    client: publicClient,
 
-//   });
+  });
 
 // export const accountContract = getContract({
 //   address: "0x95dcB08D52Fe1D79dd6F6D159C28798D7C4656E9",

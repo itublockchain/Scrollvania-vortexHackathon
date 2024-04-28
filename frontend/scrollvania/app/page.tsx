@@ -5,12 +5,18 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useReadContract, useWatchContractEvent } from "wagmi";
 import { config } from "../utils/config";
-import { entryPointABI, eventContractABI, eventContractAddress } from "../utils/constants";
-import { readContract,writeContract} from "wagmi/actions";
-import { scrollSepolia } from "wagmi/chains";  
-import { calculateSenderAddress,factoryData } from "@/utils/helpers";
+import { bundlerClient,getGasPrice,entryPointContract, } from "../utils/helpers";
+
+import {
+  entryPointABI,
+  eventContractABI,
+  eventContractAddress,
+} from "../utils/constants";
+import { readContract, writeContract } from "wagmi/actions";
+import { scrollSepolia } from "wagmi/chains";
+import { calculateSenderAddress, factoryData } from "@/utils/helpers";
 import { ENTRYPOINT_ADDRESS_V07 } from "permissionless";
-import { parseEther } from "viem";
+import { parseEther,Hex } from "viem";
 
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -27,7 +33,7 @@ export default function Home() {
     abi: eventContractABI,
     eventName: "ev",
     chainId: scrollSepolia.id,
-    
+
     onLogs(logs) {
       console.log("New logs!", logs);
     },
@@ -41,25 +47,58 @@ export default function Home() {
   // }).then((result) => {console.log(result)});
 
   const fundEntryPoint = async () => {
-    const result= await writeContract(config, {
+    const result = await writeContract(config, {
       abi: entryPointABI,
       address: ENTRYPOINT_ADDRESS_V07,
-      functionName: 'depositTo',
+      functionName: "depositTo",
       chainId: scrollSepolia.id,
       args: ["0xD7f1cc89aA56Bf4078bb6D30569805bB93128d0A"],
       value: parseEther("0.1"),
-    })
-  }
+    });
+  };
 
   const consoleResult = async () => {
     const result = await readContract(config, {
       abi: eventContractABI,
       address: eventContractAddress,
-      functionName: 'count',
+      functionName: "count",
       chainId: scrollSepolia.id,
-      
-    })
-    console.log(result)
+    });
+    console.log(result);
+  };
+
+  const incrementOP = async () => {
+    let nonce = await entryPointContract.read.getNonce(["", 0]);
+    let gasPrice = await getGasPrice();
+    
+    const senderAddress = await calculateSenderAddress(factoryData);
+
+    const userOperationHash = await bundlerClient.sendUserOperation({
+      userOperation: {
+        sender: senderAddress,
+        nonce: BigInt(nonce),
+        
+        callData: "0x" as Hex,
+        maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        paymasterVerificationGasLimit: BigInt(1000000),
+        signature: "0x" as Hex,
+        callGasLimit: BigInt(1_000_000),
+        verificationGasLimit: BigInt(1_000_000),
+        preVerificationGas: BigInt(1_000_000),
+      },
+    });
+
+    console.log("Received User Operation hash:" + userOperationHash);
+
+    console.log("Querying for receipts...");
+    const receipt = await bundlerClient.waitForUserOperationReceipt({
+      hash: userOperationHash,
+    });
+
+    const txHash = receipt.receipt.transactionHash;
+
+    console.log(`UserOperation included: ${txHash}`);
   };
 
   const generateRandomCode = () => {
@@ -73,7 +112,7 @@ export default function Home() {
   const consoleSenderAddress = async () => {
     const senderAddress = await calculateSenderAddress(factoryData);
     console.log(senderAddress);
-  }
+  };
 
   const handleJoinLobby = () => {
     const inputCode = prompt("Lobi davet kodunu girin:");
@@ -107,16 +146,22 @@ export default function Home() {
             >
               How to Play
             </button>
-            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
-            onClick={()=>consoleResult()}>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => consoleResult()}
+            >
               Connect Wallet
             </button>
-            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
-            onClick={()=>consoleSenderAddress()}>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => consoleSenderAddress()}
+            >
               Sender Address
             </button>
-            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
-            onClick={()=>fundEntryPoint()}>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => fundEntryPoint()}
+            >
               FundMe
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
