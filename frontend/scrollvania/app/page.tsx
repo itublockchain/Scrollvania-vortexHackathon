@@ -8,6 +8,7 @@ import { config } from "../utils/config";
 import { eventContractABI, eventContractAddress } from "../utils/constants";
 import { readContract } from "wagmi/actions";
 import { scrollSepolia } from "wagmi/chains";  
+import { calculateSenderAddress,factoryData } from "@/utils/helpers";
 
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -56,6 +57,10 @@ export default function Home() {
     }
     return code;
   };
+  const consoleSenderAddress = async () => {
+    const senderAddress = await calculateSenderAddress(factoryData);
+    console.log(senderAddress);
+  }
 
   const handleJoinLobby = () => {
     const inputCode = prompt("Lobi davet kodunu girin:");
@@ -92,6 +97,10 @@ export default function Home() {
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
             onClick={()=>consoleResult()}>
               Connect Wallet
+            </button>
+            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+            onClick={()=>consoleSenderAddress()}>
+              Sender Address
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
               Join Lobby
