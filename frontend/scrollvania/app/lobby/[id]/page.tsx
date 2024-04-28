@@ -28,16 +28,10 @@ const LobiPage = () => {
 
   return (
     <>
-      <div className="flex flex-row space-x-10 justify-center">
-        <div className="bg-violet-900 w-72 h-44 rounded-2xl flex flex-col justify-center items-center space-y-2 mt-6">
-          <p className="text-xl">Lobi Kodu: {lobbyCode}</p>
-
-          <button className="h-12 w-28 bg-rose-900 rounded-full">
-            Oyunu Başlat
-          </button>
+      <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover ">
+        <div className="w-16 h-16 rounded-full bg-white">
+          
         </div>
-
-        <div className="bg-violet-900 h-[800px] w-[800px] rounded-3xl mt-6"></div>
       </div>
     </>
   );

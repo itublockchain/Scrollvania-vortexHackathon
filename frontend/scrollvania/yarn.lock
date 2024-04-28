@@ -4225,6 +4225,11 @@ pathe@^1.1.1, pathe@^1.1.2:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-1.1.2.tgz#6c4cb47a945692e48a1ddd6e4094d170516437ec"
   integrity sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==
 
+permissionless@^0.1.21:
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/permissionless/-/permissionless-0.1.21.tgz#794ac5cc7de56161ecec9eac0a9e6821371db131"
+  integrity sha512-/7zI4082w8pUYU/Xi4GOcWc4vhgjkW15/q7srA+b3TCn6/Uhnr1CjQl8ABJWEF1SYlVE+/x8e8RntBZ9VRDYpw==
+
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
