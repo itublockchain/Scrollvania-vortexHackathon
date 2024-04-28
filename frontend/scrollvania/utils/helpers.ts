@@ -152,3 +152,26 @@ export const calculateSenderAddress = async (factoryData) => {
   });
   return senderAddress;
 };
+
+
+
+
+
+// const fundAccount = async () => {
+//     // const fund = await entryPointContract.write.depositTo([accountAddress],parseEther("0.01"));
+//     // console.log(fund);
+//     const factoryData = await getFactoryData(
+//       primaryWallet?.address,
+//       user?.alias
+//     );
+//     const { request } = await publicClient.simulateContract({
+//       account: primaryWallet?.address,
+//       address: ENTRYPOINT_ADDRESS_V07,
+//       abi: entryPointABI,
+//       functionName: 'depositTo',
+//       args: [await calculateSenderAddress(factoryData)],
+//       value: parseEther("0.2"),
+//     })
+//     const fund =await walletClient.writeContract(request)
+//     console.log(fund)
+//   }

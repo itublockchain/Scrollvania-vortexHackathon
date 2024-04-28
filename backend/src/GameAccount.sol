@@ -8,7 +8,7 @@ import "@account-abstraction/interfaces/IAccount.sol";
 
 contract GameAccount is IAccount {
     
-    
+    uint256 public count;
     address public owner;
     string public userName = "Emojan";
     
@@ -24,6 +24,10 @@ contract GameAccount is IAccount {
         uint256
     ) external virtual override returns (uint256 validationData) {
         return 0;
+    }
+
+    function increment() public {
+        count++;
     }
 
     

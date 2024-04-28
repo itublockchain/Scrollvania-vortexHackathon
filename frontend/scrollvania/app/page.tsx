@@ -5,10 +5,12 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useReadContract, useWatchContractEvent } from "wagmi";
 import { config } from "../utils/config";
-import { eventContractABI, eventContractAddress } from "../utils/constants";
-import { readContract } from "wagmi/actions";
+import { entryPointABI, eventContractABI, eventContractAddress } from "../utils/constants";
+import { readContract,writeContract} from "wagmi/actions";
 import { scrollSepolia } from "wagmi/chains";  
 import { calculateSenderAddress,factoryData } from "@/utils/helpers";
+import { ENTRYPOINT_ADDRESS_V07 } from "permissionless";
+import { parseEther } from "viem";
 
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -37,6 +39,17 @@ export default function Home() {
   //   functionName: "count",
   //   chainId: config.chains[0].id,
   // }).then((result) => {console.log(result)});
+
+  const fundEntryPoint = async () => {
+    const result= await writeContract(config, {
+      abi: entryPointABI,
+      address: ENTRYPOINT_ADDRESS_V07,
+      functionName: 'depositTo',
+      chainId: scrollSepolia.id,
+      args: ["0xD7f1cc89aA56Bf4078bb6D30569805bB93128d0A"],
+      value: parseEther("0.1"),
+    })
+  }
 
   const consoleResult = async () => {
     const result = await readContract(config, {
@@ -101,6 +114,10 @@ export default function Home() {
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
             onClick={()=>consoleSenderAddress()}>
               Sender Address
+            </button>
+            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+            onClick={()=>fundEntryPoint()}>
+              FundMe
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
               Join Lobby
