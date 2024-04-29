@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -30,28 +31,33 @@ import { get } from "http";
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-  const [lobbies, setLobbies] = useState();
+  const [lobbies, setLobbies] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const getLobbies = async () => {
-      const result = await readContract(config, {
+      const result = (await readContract(config, {
         abi: lobbyFactoryABI,
         address: lobbyFactoryAddress,
         functionName: "getDeployedLobbies",
         chainId: scrollSepolia.id,
-      }) as any;
+      })) as any;
 
-      setLobbies(result);
+      // Filter out the objects where gameFinished is false
+      const filteredLobbies = result.filter(
+        (lobby) => lobby.gameFinished === false
+      );
 
+      // Set the filtered lobbies state
+      setLobbies(filteredLobbies);
     };
-    
-    getLobbies();
 
+    getLobbies();
   }, []);
 
   const consoleLobbies = async () => {
     console.log(lobbies);
-  }
+  };
 
   const handleCreateLobby = () => {
     const generatedCode = generateRandomCode();
@@ -172,7 +178,29 @@ export default function Home() {
           Welcome to Scrollvania
         </h3>
         <div className="flex flex-row justify-evenly items-center ">
-          <div className="w-96 h-[500px] bg-white rounded-3xl opacity-80 flex flex-col"></div>
+          <div className="w-[700px] h-[500px] bg-white rounded-3xl opacity-80 flex flex-col">
+            {lobbies &&
+              lobbies.map((lobby, index) => {
+                return (
+                  <Link
+                    key={index}
+                    href={`/lobby/${lobby.lobbyAddress}`}
+                  >
+                    <div
+                      key={index}
+                      className="flex flex-row justify-between p-2"
+                    >
+                      <p>{lobby.lobbyAddress}</p>
+                      <p>
+                        {lobby.gameFinished
+                          ? "Oyun Bitti"
+                          : "Oyun Devam Ediyor"}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+          </div>
           <Image
             src={"/vampir.png"}
             alt="Vampir"
