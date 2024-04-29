@@ -63,7 +63,7 @@ export const publicClient = createPublicClient({
 export const bundlerClient = createClient({
   chain: gnosisChiado,
   transport: http(endpointUrl),
-})
+})//@ts-ignore
   .extend(bundlerActions(ENTRYPOINT_ADDRESS_V07))
   .extend(pimlicoBundlerActions(ENTRYPOINT_ADDRESS_V07));
 
@@ -84,12 +84,14 @@ export const incrementFuncData = encodeFunctionData({
 export const entryPointContract = getContract({
   address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
   abi: entryPointABI,
+  //@ts-ignore
   client: publicClient,
 });
 
 export const factoryContract = getContract({
   address: AF_ADDRESS,
   abi: gameAccountFactoryABI,
+  //@ts-ignore
   client: publicClient,
 });
 
@@ -108,6 +110,7 @@ export const getGasPrice = async () => {
   return gasPrice;
 };
 export const calculateSenderAddress = async (factoryData) => {
+  //@ts-ignore
   const senderAddress = await getSenderAddress(publicClient, {
     factory,
     factoryData: factoryData,
