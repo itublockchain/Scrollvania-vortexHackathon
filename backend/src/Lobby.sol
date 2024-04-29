@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-
+import "./LobbyFactory.sol";
 /*Yapılacaklar
 
     oyları sıfırla - bunu bilmiyorum 
@@ -38,6 +38,7 @@ contract Lobby {
     uint256 public playerCount;
     uint256 public voteCount;
     uint256 public vampireCount;
+    LobbyFactory public lobbyFactory= LobbyFactory(0xdC1707b63dC69f36A4a8434C33a5f9228106d1AD);
 
     modifier countTime {
         require(block.timestamp <= timeCounter + 40 minutes, "Time has not passed yet");
@@ -51,6 +52,8 @@ contract Lobby {
     event gameStarted();
     event murdered(string victim);
     event Dispacth(string suspect);
+
+    
 
     function joinLobby(
         string memory _nickName
@@ -103,12 +106,14 @@ contract Lobby {
                 vampireCount--;
                 if(vampireCount == 0){
                     gameFinished = true;
+                    lobbyFactory.updateLobbyInfo(address(this),gameFinished);
                 }
             }
             else{
                 playerCount--;
                 if(playerCount == 0){
                     gameFinished = true;
+                    lobbyFactory.updateLobbyInfo(address(this),gameFinished);
                 }
             }
 
@@ -164,6 +169,7 @@ contract Lobby {
 
             if(playerCount == 0){
             gameFinished = true;
+            lobbyFactory.updateLobbyInfo(address(this),gameFinished);
             }
             voteCount = 0;
         timeCounter = block.timestamp;
