@@ -1,6 +1,6 @@
 export const eventContractAddress ="0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
-export const lobbyFactoryAddress = "0xdC1707b63dC69f36A4a8434C33a5f9228106d1AD";
-export const AF_ADDRESS = "0xaB0BFe7fC32bb98fD6FdeC3755ec3E78A2980121";
+export const lobbyFactoryAddress = "0x1d0Fc961901BA4DA919a72220E5aF5F6b2c07709";
+export const AF_ADDRESS = "0x3635B6D0b150d438163EAF7417812feBC4030f2c";
 
 export const eventContractABI = [
   {
@@ -22,55 +22,55 @@ export const eventContractABI = [
 
 export const gameAccountFactoryABI = [
   {
-    type: "function",
-    name: "accounts",
-    inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "accounts",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "createAccount",
-    inputs: [
-      { name: "owner", type: "address", internalType: "address" },
-      { name: "userName", type: "string", internalType: "string" },
+    "type": "function",
+    "name": "createAccount",
+    "inputs": [
+      { "name": "owner", "type": "address", "internalType": "address" },
+      { "name": "userName", "type": "string", "internalType": "string" }
     ],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
-    stateMutability: "nonpayable",
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "nonpayable"
   },
   {
-    type: "function",
-    name: "hasAccount",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "hasAccount",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "ownerToAccount",
-    inputs: [{ name: "", type: "address", internalType: "address" }],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "ownerToAccount",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
   },
   {
-    type: "event",
-    name: "AccountCreated",
-    inputs: [
+    "type": "event",
+    "name": "AccountCreated",
+    "inputs": [
       {
-        name: "account",
-        type: "address",
-        indexed: false,
-        internalType: "address",
+        "name": "account",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
       },
       {
-        name: "owner",
-        type: "address",
-        indexed: false,
-        internalType: "address",
-      },
+        "name": "owner",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
-  },
+    "anonymous": false
+  }
 ];
 export const entryPointABI = [
   { type: "receive", stateMutability: "payable" },
@@ -825,85 +825,143 @@ export const entryPointABI = [
 ];
 export const gameAccountABI = [
   {
-    type: "constructor",
-    inputs: [
-      { name: "_owner", type: "address", internalType: "address" },
-      { name: "_userName", type: "string", internalType: "string" },
+    "type": "constructor",
+    "inputs": [
+      { "name": "_owner", "type": "address", "internalType": "address" },
+      { "name": "_userName", "type": "string", "internalType": "string" }
     ],
-    stateMutability: "nonpayable",
+    "stateMutability": "nonpayable"
   },
   {
-    type: "function",
-    name: "count",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "count",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "increment",
-    inputs: [],
-    outputs: [],
-    stateMutability: "nonpayable",
+    "type": "function",
+    "name": "increment",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: "function",
-    name: "owner",
-    inputs: [],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "userName",
-    inputs: [],
-    outputs: [{ name: "", type: "string", internalType: "string" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "validateUserOp",
-    inputs: [
+    "type": "function",
+    "name": "joinLobby",
+    "inputs": [
       {
-        name: "",
-        type: "tuple",
-        internalType: "struct PackedUserOperation",
-        components: [
-          { name: "sender", type: "address", internalType: "address" },
-          { name: "nonce", type: "uint256", internalType: "uint256" },
-          { name: "initCode", type: "bytes", internalType: "bytes" },
-          { name: "callData", type: "bytes", internalType: "bytes" },
-          {
-            name: "accountGasLimits",
-            type: "bytes32",
-            internalType: "bytes32",
-          },
-          {
-            name: "preVerificationGas",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          { name: "gasFees", type: "bytes32", internalType: "bytes32" },
-          {
-            name: "paymasterAndData",
-            type: "bytes",
-            internalType: "bytes",
-          },
-          { name: "signature", type: "bytes", internalType: "bytes" },
-        ],
+        "name": "lobbyAddress",
+        "type": "address",
+        "internalType": "address"
       },
-      { name: "", type: "bytes32", internalType: "bytes32" },
-      { name: "", type: "uint256", internalType: "uint256" },
+      { "name": "nickName", "type": "string", "internalType": "string" }
     ],
-    outputs: [
-      {
-        name: "validationData",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
+  {
+    "type": "function",
+    "name": "kill",
+    "inputs": [
+      {
+        "name": "lobbyAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      { "name": "target", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "payout",
+    "inputs": [
+      { "name": "lobbyAddress", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "userName",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "validateUserOp",
+    "inputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct PackedUserOperation",
+        "components": [
+          { "name": "sender", "type": "address", "internalType": "address" },
+          { "name": "nonce", "type": "uint256", "internalType": "uint256" },
+          { "name": "initCode", "type": "bytes", "internalType": "bytes" },
+          { "name": "callData", "type": "bytes", "internalType": "bytes" },
+          {
+            "name": "accountGasLimits",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "preVerificationGas",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "gasFees", "type": "bytes32", "internalType": "bytes32" },
+          {
+            "name": "paymasterAndData",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          { "name": "signature", "type": "bytes", "internalType": "bytes" }
+        ]
+      },
+      { "name": "", "type": "bytes32", "internalType": "bytes32" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      {
+        "name": "validationData",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "vote",
+    "inputs": [
+      {
+        "name": "lobbyAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      { "name": "target", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "withdraw",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  }
 ];
 
 export const lobbyFactoryABI = [
@@ -953,126 +1011,218 @@ export const lobbyFactoryABI = [
   },
   {
     "type": "function",
+    "name": "lobbyToIndex",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "ownerToLobby",
     "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
     "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "updateLobbyInfo",
+    "inputs": [
+      {
+        "name": "_lobbyAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      { "name": "_gameFinished", "type": "bool", "internalType": "bool" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   }
 ];
 
 export const lobbyABI = [
   {
-    type: "function",
-    name: "gunduz",
-    inputs: [],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "joinLobby",
-    inputs: [{ name: "_nickName", type: "string", internalType: "string" }],
-    outputs: [],
-    stateMutability: "payable",
-  },
-  {
-    type: "function",
-    name: "playerCount",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "players",
-    inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    outputs: [
-      { name: "nickname", type: "string", internalType: "string" },
-      { name: "userAddress", type: "address", internalType: "address" },
-      { name: "role", type: "uint8", internalType: "enum Lobby.Role" },
-      { name: "votes", type: "uint256", internalType: "uint256" },
+    "type": "function",
+    "name": "addresstoplayerMap",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [
+      { "name": "nickname", "type": "string", "internalType": "string" },
+      { "name": "userAddress", "type": "address", "internalType": "address" },
+      { "name": "role", "type": "uint8", "internalType": "enum Lobby.Role" },
+      { "name": "votes", "type": "uint256", "internalType": "uint256" },
+      { "name": "isPaid", "type": "bool", "internalType": "bool" }
     ],
-    stateMutability: "view",
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "targets",
-    inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    outputs: [{ name: "", type: "string", internalType: "string" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "gameFinished",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "timeCounter",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "gunduz",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "vampireCount",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "highestVote",
+    "inputs": [],
+    "outputs": [
+      { "name": "voteNumber", "type": "uint256", "internalType": "uint256" },
+      { "name": "playerNickname", "type": "string", "internalType": "string" }
+    ],
+    "stateMutability": "view"
   },
   {
-    type: "function",
-    name: "vote",
-    inputs: [{ name: "target", type: "string", internalType: "string" }],
-    outputs: [],
-    stateMutability: "nonpayable",
+    "type": "function",
+    "name": "joinLobby",
+    "inputs": [
+      { "name": "_nickName", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: "function",
-    name: "voteCount",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
+    "type": "function",
+    "name": "kill",
+    "inputs": [
+      { "name": "target", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: "event",
-    name: "Dispacth",
-    inputs: [
+    "type": "function",
+    "name": "payout",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "playerCount",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "playerMap",
+    "inputs": [{ "name": "", "type": "string", "internalType": "string" }],
+    "outputs": [
+      { "name": "nickname", "type": "string", "internalType": "string" },
+      { "name": "userAddress", "type": "address", "internalType": "address" },
+      { "name": "role", "type": "uint8", "internalType": "enum Lobby.Role" },
+      { "name": "votes", "type": "uint256", "internalType": "uint256" },
+      { "name": "isPaid", "type": "bool", "internalType": "bool" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "players",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "nickname", "type": "string", "internalType": "string" },
+      { "name": "userAddress", "type": "address", "internalType": "address" },
+      { "name": "role", "type": "uint8", "internalType": "enum Lobby.Role" },
+      { "name": "votes", "type": "uint256", "internalType": "uint256" },
+      { "name": "isPaid", "type": "bool", "internalType": "bool" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "targets",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "timeCounter",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "vampireCount",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "villagerCount",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "vote",
+    "inputs": [
+      { "name": "target", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "voteCount",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "Dispacth",
+    "inputs": [
       {
-        name: "suspect",
-        type: "string",
-        indexed: false,
-        internalType: "string",
-      },
+        "name": "suspect",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: "event",
-    name: "gameStarted",
-    inputs: [],
-    anonymous: false,
+    "type": "event",
+    "name": "gameStarted",
+    "inputs": [],
+    "anonymous": false
   },
   {
-    type: "event",
-    name: "murdered",
-    inputs: [
+    "type": "event",
+    "name": "murdered",
+    "inputs": [
       {
-        name: "victim",
-        type: "string",
-        indexed: false,
-        internalType: "string",
-      },
+        "name": "victim",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
-  { type: "event", name: "timeUpdate", inputs: [], anonymous: false },
+  { "type": "event", "name": "timeUpdate", "inputs": [], "anonymous": false },
   {
-    type: "event",
-    name: "vampireFound",
-    inputs: [
+    "type": "event",
+    "name": "vampireFound",
+    "inputs": [
       {
-        name: "vampireNickname",
-        type: "string",
-        indexed: false,
-        internalType: "string",
-      },
+        "name": "vampireNickname",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
     ],
-    anonymous: false,
-  },
+    "anonymous": false
+  }
 ];

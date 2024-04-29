@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useReadContract, useWatchContractEvent } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
 import { config } from "../utils/config";
 import {
   bundlerClient,
@@ -14,10 +14,12 @@ import {
 } from "../utils/helpers";
 
 import {
+  AF_ADDRESS,
   entryPointABI,
   eventContractABI,
   eventContractAddress,
   gameAccountABI,
+  gameAccountFactoryABI,
   lobbyFactoryABI,
   lobbyFactoryAddress,
 } from "../utils/constants";
@@ -32,7 +34,9 @@ export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [lobbies, setLobbies] = useState(null);
+  const [gameAccount,setGameAccount] = useState(null);
   const router = useRouter();
+  const {address} = useAccount();
 
   useEffect(() => {
     const getLobbies = async () => {
@@ -53,6 +57,8 @@ export default function Home() {
     };
 
     getLobbies();
+    getAccount();
+
   }, []);
 
   const consoleLobbies = async () => {
@@ -65,6 +71,21 @@ export default function Home() {
     setShowPopup(true);
   };
 
+  const consoleAccount = async () => {
+    console.log(gameAccount);
+  }
+
+  const getAccount = async () => {
+    const result = await readContract(config, {
+      abi: gameAccountFactoryABI,
+      address: AF_ADDRESS,
+      functionName: "ownerToAccount",
+      chainId: scrollSepolia.id,
+      args: [address],
+    });
+    setGameAccount(result);
+  }
+
   useWatchContractEvent({
     address: eventContractAddress,
     abi: eventContractABI,
@@ -76,12 +97,9 @@ export default function Home() {
     },
   });
 
-  // const result = useReadContract({
-  //   abi: eventContractABI,
-  //   address: eventContractAddress,
-  //   functionName: "count",
-  //   chainId: config.chains[0].id,
-  // }).then((result) => {console.log(result)});
+
+
+  
 
   const fundEntryPoint = async () => {
     const result = await writeContract(config, {
@@ -89,33 +107,44 @@ export default function Home() {
       address: ENTRYPOINT_ADDRESS_V07,
       functionName: "depositTo",
       chainId: scrollSepolia.id,
-      args: ["0x581d0b761C28F1daE307A57CCd6e61ebD52c734d"],
-      value: parseEther("0.1"),
+      args: [gameAccount],
+      value: parseEther("0.01"),
     });
   };
 
-  const consoleResult = async () => {
-    const result = await readContract(config, {
-      abi: eventContractABI,
-      address: eventContractAddress,
-      functionName: "count",
-      chainId: scrollSepolia.id,
-    });
-    console.log(result);
-  };
+  // const consoleResult = async () => {
+  //   const result = await readContract(config, {
+  //     abi: eventContractABI,
+  //     address: eventContractAddress,
+  //     functionName: "count",
+  //     chainId: scrollSepolia.id,
+  //   });
+  //   console.log(result);
+  // };
   const consoleCount = async () => {
     const result = await readContract(config, {
       abi: gameAccountABI,
-      address: "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
+      address: gameAccount,
       functionName: "count",
       chainId: scrollSepolia.id,
     });
     console.log(result);
   };
 
+  const createLobby = async () => {
+    const result = await writeContract(config, {
+      abi: lobbyFactoryABI,
+      address: lobbyFactoryAddress,
+      functionName: "createLobby",
+      chainId: scrollSepolia.id,
+      
+    });
+    console.log(result);
+  }
+
   const incrementOP = async () => {
     let nonce = await (entryPointContract as any).read.getNonce([
-      "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
+      gameAccount,
       0,
     ]);
     let gasPrice = await getGasPrice();
@@ -124,7 +153,7 @@ export default function Home() {
 
     const userOperationHash = await bundlerClient.sendUserOperation({
       userOperation: {
-        sender: "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
+        sender: gameAccount,
         nonce: BigInt(nonce),
         callData: incrementFuncData as Hex,
         maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
@@ -171,6 +200,17 @@ export default function Home() {
     }
   };
 
+  const createAccount = async () => {
+    const result = await writeContract(config, {
+      abi: gameAccountFactoryABI,
+      address: AF_ADDRESS,
+      functionName: "createAccount",
+      chainId: scrollSepolia.id,
+      args: [address, "Emirhan"],
+    });
+    console.log(result);
+  };
+
   return (
     <>
       <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover ">
@@ -190,7 +230,7 @@ export default function Home() {
                       key={index}
                       className="flex flex-row justify-between p-2"
                     >
-                      <p>{lobby.lobbyAddress}</p>
+                      <p>Join Lobby </p>
                       <p>
                         {lobby.gameFinished
                           ? "Oyun Bitti"
@@ -216,12 +256,12 @@ export default function Home() {
             >
               How to Play
             </button>
-            <button
+            {/* <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleResult()}
             >
               Connect Wallet
-            </button>
+            </button> */}
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleSenderAddress()}
@@ -236,6 +276,19 @@ export default function Home() {
             </button>
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => createAccount()}
+            >
+              CreateAccount
+            </button>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => createLobby()}
+            >
+              CreateLobby
+            </button>
+
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleCount()}
             >
               Count
@@ -246,15 +299,14 @@ export default function Home() {
             >
               Increment
             </button>
+            
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
-              onClick={() => consoleLobbies()}
+              onClick={() => consoleAccount()}
             >
-              Lobbies
+              Account
             </button>
-            <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
-              Join Lobby
-            </button>
+           
             
             <ConnectButton />
             

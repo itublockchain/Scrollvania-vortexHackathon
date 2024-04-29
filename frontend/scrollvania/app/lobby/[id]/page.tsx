@@ -1,13 +1,24 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useWatchContractEvent } from "wagmi";
+import { useAccount, useWatchContractEvent } from "wagmi";
 import { scrollSepolia } from "wagmi/chains";
 import Image from "next/image";
+import { bundlerClient, entryPointContract, getGasPrice,getJoinLobbyData,joinLobbyData } from "@/utils/helpers";
+import { readContract } from "wagmi/actions";
+import { AF_ADDRESS, gameAccountFactoryABI } from "@/utils/constants";
+import { config } from "@/utils/config";
+import { useParams } from "next/navigation";
+import { get } from "http";
+import { Hex } from "viem";
 
 const LobiPage = () => {
   const [lobbyCode, setLobbyCode] = useState("");
-
+  const [gameAccount,setGameAccount] = useState(null);
+  const router = useRouter();
+  const {address} = useAccount();
+  const { id } = useParams();
+  
   const images = [
     "/kedi.png",
     "/ghost.png",
@@ -21,6 +32,21 @@ const LobiPage = () => {
     "/witch.png",
   ];
 
+  useEffect(() => {
+    getAccount();
+  }, []);
+
+  const getAccount = async () => {
+    const result = await readContract(config, {
+      abi: gameAccountFactoryABI,
+      address: AF_ADDRESS,
+      functionName: "ownerToAccount",
+      chainId: scrollSepolia.id,
+      args: [address],
+    });
+    setGameAccount(result);
+  }
+  
   async function StartGame() {
     useWatchContractEvent({
       address: "0x",
@@ -33,12 +59,46 @@ const LobiPage = () => {
     });
   }
 
-  useEffect(() => {
-    const path = window.location.pathname;
-    const parts = path.split("/");
-    const code = parts[parts.length - 1];
-    setLobbyCode(code);
-  }, []);
+  const joinLobby = async (nickName) => {
+    let nonce = await (entryPointContract as any).read.getNonce([
+      gameAccount,
+      0,
+    ]);
+    let gasPrice = await getGasPrice();
+
+    const joinLobbyData = await getJoinLobbyData(lobbyCode,nickName );
+
+    // const senderAddress = await calculateSenderAddress(factoryData);
+
+    const userOperationHash = await bundlerClient.sendUserOperation({
+      userOperation: {
+        sender: gameAccount,
+        nonce: BigInt(nonce),
+        callData: joinLobbyData as Hex,
+        maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        paymasterVerificationGasLimit: BigInt(1000000),
+        signature: "0x" as Hex,
+        callGasLimit: BigInt(1_000_000),
+        verificationGasLimit: BigInt(1_000_000),
+        preVerificationGas: BigInt(1_000_000),
+      },
+    });
+
+    console.log("Received User Operation hash:" + userOperationHash);
+
+    console.log("Querying for receipts...");
+    const receipt = await bundlerClient.waitForUserOperationReceipt({
+      hash: userOperationHash,
+    });
+
+    const txHash = receipt.receipt.transactionHash;
+
+    console.log(`UserOperation included: ${txHash}`);
+  };
+
+
+
 
   return (
     <>

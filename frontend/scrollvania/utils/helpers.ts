@@ -35,6 +35,7 @@ import {
   gameAccountFactoryABI,
   gameAccountABI,
   AF_ADDRESS,
+  lobbyABI,
   
 } from "../utils/constants";
 import dynamic from "next/dynamic";
@@ -96,6 +97,15 @@ export const factoryContract = getContract({
 });
 
 // HELPER FUNCTIONS
+export const getJoinLobbyData = async (lobbyAddress,nickName) => {
+  const joinLobbyData = encodeFunctionData({
+    abi: lobbyABI,
+    functionName: "joinLobby",
+    args: [lobbyAddress,nickName],
+  });
+  return joinLobbyData;
+
+}
 export const getFactoryData = async (address: any, alias: any) => {
   const factoryData = encodeFunctionData({
     abi: gameAccountFactoryABI,
