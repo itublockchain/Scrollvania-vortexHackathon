@@ -9,6 +9,9 @@ import {
   entryPointContract,
   getGasPrice,
   getJoinLobbyData,
+  getKillData,
+  getPayoutData,
+  getVoteData,
 } from "@/utils/helpers";
 import { readContract } from "wagmi/actions";
 import { AF_ADDRESS, gameAccountFactoryABI, lobbyABI } from "@/utils/constants";
@@ -74,7 +77,7 @@ const LobiPage = () => {
     ]);
     let gasPrice = await getGasPrice();
 
-    const joinLobbyData = await getJoinLobbyData(lobbyCode, nickName);
+    const joinLobbyData = await getJoinLobbyData(id, nickName);
 
     // const senderAddress = await calculateSenderAddress(factoryData);
 
@@ -83,6 +86,120 @@ const LobiPage = () => {
         sender: gameAccount,
         nonce: BigInt(nonce),
         callData: joinLobbyData as Hex,
+        maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        paymasterVerificationGasLimit: BigInt(1000000),
+        signature: "0x" as Hex,
+        callGasLimit: BigInt(1_000_000),
+        verificationGasLimit: BigInt(1_000_000),
+        preVerificationGas: BigInt(1_000_000),
+      },
+    });
+
+    console.log("Received User Operation hash:" + userOperationHash);
+
+    console.log("Querying for receipts...");
+    const receipt = await bundlerClient.waitForUserOperationReceipt({
+      hash: userOperationHash,
+    });
+
+    const txHash = receipt.receipt.transactionHash;
+
+    console.log(`UserOperation included: ${txHash}`);
+  };
+  const kill = async (nickName) => {
+    setNickname(nickName);
+    let nonce = await (entryPointContract as any).read.getNonce([
+      gameAccount,
+      0,
+    ]);
+    let gasPrice = await getGasPrice();
+
+    const killData = await getKillData(id, nickName);
+
+    // const senderAddress = await calculateSenderAddress(factoryData);
+
+    const userOperationHash = await bundlerClient.sendUserOperation({
+      userOperation: {
+        sender: gameAccount,
+        nonce: BigInt(nonce),
+        callData: killData as Hex,
+        maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        paymasterVerificationGasLimit: BigInt(1000000),
+        signature: "0x" as Hex,
+        callGasLimit: BigInt(1_000_000),
+        verificationGasLimit: BigInt(1_000_000),
+        preVerificationGas: BigInt(1_000_000),
+      },
+    });
+
+    console.log("Received User Operation hash:" + userOperationHash);
+
+    console.log("Querying for receipts...");
+    const receipt = await bundlerClient.waitForUserOperationReceipt({
+      hash: userOperationHash,
+    });
+
+    const txHash = receipt.receipt.transactionHash;
+
+    console.log(`UserOperation included: ${txHash}`);
+  };
+  const vote = async (nickName) => {
+    setNickname(nickName);
+    let nonce = await (entryPointContract as any).read.getNonce([
+      gameAccount,
+      0,
+    ]);
+    let gasPrice = await getGasPrice();
+
+    const voteData = await getVoteData(id, nickName);
+
+    // const senderAddress = await calculateSenderAddress(factoryData);
+
+    const userOperationHash = await bundlerClient.sendUserOperation({
+      userOperation: {
+        sender: gameAccount,
+        nonce: BigInt(nonce),
+        callData: voteData as Hex,
+        maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
+        paymasterVerificationGasLimit: BigInt(1000000),
+        signature: "0x" as Hex,
+        callGasLimit: BigInt(1_000_000),
+        verificationGasLimit: BigInt(1_000_000),
+        preVerificationGas: BigInt(1_000_000),
+      },
+    });
+
+    console.log("Received User Operation hash:" + userOperationHash);
+
+    console.log("Querying for receipts...");
+    const receipt = await bundlerClient.waitForUserOperationReceipt({
+      hash: userOperationHash,
+    });
+
+    const txHash = receipt.receipt.transactionHash;
+
+    console.log(`UserOperation included: ${txHash}`);
+  };
+  const payout = async (nickName) => {
+    
+    let nonce = await (entryPointContract as any).read.getNonce([
+      gameAccount,
+      0,
+    ]);
+    let gasPrice = await getGasPrice();
+
+    const payoutData = await getPayoutData(id);
+
+    // const senderAddress = await calculateSenderAddress(factoryData);
+
+    const userOperationHash = await bundlerClient.sendUserOperation({
+      userOperation: {
+        sender: gameAccount,
+        nonce: BigInt(nonce),
+        callData: payoutData as Hex,
         maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
         maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
         paymasterVerificationGasLimit: BigInt(1000000),
