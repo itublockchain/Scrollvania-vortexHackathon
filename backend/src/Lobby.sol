@@ -29,17 +29,18 @@ contract Lobby {
     }
 
     event timeUpdate();
+    bool public gameFinished = false;
     string[] public targets;
     uint public timeCounter;
     Player[] public players;
-    mapping(string => Player) private playerMap;
-    mapping(address => Player) private addresstoplayerMap;
+    mapping(string => Player) public playerMap;
+    mapping(address => Player) public addresstoplayerMap;
     uint256 public playerCount;
     uint256 public voteCount;
-    uint256 public vampireCount = 2;
+    uint256 public vampireCount;
 
     modifier countTime {
-        require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
+        require(block.timestamp <= timeCounter + 40 minutes, "Time has not passed yet");
         _;
     }
 
@@ -72,8 +73,14 @@ contract Lobby {
         if(playerCount==10){
             timeCounter = block.timestamp;
             uint randNum = block.timestamp; //burası olmaz çözüm bulmak gerekiyor
-            playerMap[players[randNum%9+1].nickname].role=Role.Vampire;
-            playerMap[players[randNum%9].nickname].role=Role.Vampire;
+            playerMap[players[randNum%9+1].nickname].role = Role.Vampire;
+            playerMap[players[randNum%9].nickname].role = Role.Vampire;
+            addresstoplayerMap[players[randNum%9+1].userAddress].role = Role.Vampire;
+            addresstoplayerMap[players[randNum%9].userAddress].role = Role.Vampire;
+            players[randNum%9+1].role = Role.Vampire;
+            players[randNum%9].role = Role.Vampire;
+            playerCount = 8;
+            vampireCount = 2;
             emit gameStarted();
         }
     }
@@ -91,12 +98,25 @@ contract Lobby {
             highestVote.voteNumber = playerMap[target].votes;
             highestVote.playerNickname = target;
         }
-        if(voteCount == playerCount){
+        if(voteCount == playerCount + vampireCount){
             if(playerMap[highestVote.playerNickname].role == Role.Vampire){
                 vampireCount--;
+                if(vampireCount == 0){
+                    gameFinished = true;
+                }
             }
-            playerMap[highestVote.playerNickname].role = Role.Dead;
-            playerCount--;
+            else{
+                playerCount--;
+                if(playerCount == 0){
+                    gameFinished = true;
+                }
+            }
+
+            for(uint i = 0; i < players.length;i++){
+            playerMap[players[i].nickname].votes = 0;
+            }
+
+            delete playerMap[highestVote.playerNickname];
             voteCount = 0;
         timeCounter = block.timestamp;
         gunduz = !gunduz;
@@ -117,7 +137,7 @@ contract Lobby {
     }
     
     
-    function kill( string memory target) private countTime{
+    function kill( string memory target) public countTime{
        // require(block.timestamp <= timeCounter + 40 seconds, "Time has not passed yet");
         require(gunduz == false, "It is not night time");
         require(addresstoplayerMap[msg.sender].role == Role.Vampire, "Only vampires can kill");
@@ -127,35 +147,30 @@ contract Lobby {
         voteCount++;
         targets.push(target);
 
-      /*  playerMap[target].votes++;
-        targets.push(target);
-        for(uint i = 0; i < targets.length; i++){
-            if(playerMap[targets[i]].votes > playerMap[targets[i+1]].votes){
-                highestVote.voteNumber = playerMap[targets[i]].votes;
-            }
-        }
-
-        for(uint i = 0; i < targets.length; i++){
-            if(playerMap[targets[i]].votes == highestVote.voteNumber){
-                playerMap[targets[i]].role = Role.None;
-            }
-        }
-        */
        if(playerMap[target].votes > highestVote.voteNumber){
             highestVote.voteNumber = playerMap[target].votes;
             highestVote.playerNickname = target;
         }
 
        if(voteCount == vampireCount){
-            playerMap[highestVote.playerNickname].role = Role.Dead;
+
+            for(uint i = 0; i < players.length;i++){
+            playerMap[players[i].nickname].votes = 0;
+            }
+
+            delete playerMap[highestVote.playerNickname];
+            for(uint i = 0; i < players.length;i++){
             playerCount--;
+
+            if(playerCount == 0){
+            gameFinished = true;
+            }
             voteCount = 0;
         timeCounter = block.timestamp;
-        gunduz = gunduz;
+        gunduz = !gunduz;
         emit timeUpdate();
        }
         
     }
-
-
+    }
 }
