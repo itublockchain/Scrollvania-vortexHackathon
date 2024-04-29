@@ -109,6 +109,7 @@ contract Lobby {
                 if(vampireCount == 0){
                     gameFinished = true;
                     lobbyFactory.updateLobbyInfo(address(this),gameFinished);
+                    payout();
                 }
             }
             else{
@@ -116,6 +117,7 @@ contract Lobby {
                 if(playerCount == 0){
                     gameFinished = true;
                     lobbyFactory.updateLobbyInfo(address(this),gameFinished);
+                    payout();
                 }
             }
 
@@ -172,6 +174,7 @@ contract Lobby {
             if(playerCount == 0){
             gameFinished = true;
             lobbyFactory.updateLobbyInfo(address(this),gameFinished);
+            payout();
             }
             voteCount = 0;
         timeCounter = block.timestamp;
