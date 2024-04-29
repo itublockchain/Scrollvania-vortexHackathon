@@ -21,6 +21,7 @@ contract Lobby {
         address userAddress;
         Role role;
         uint256 votes;
+        bool isPaid;
     }
 
     struct HighestVote{
@@ -65,7 +66,8 @@ contract Lobby {
             nickname: _nickName,
             userAddress: msg.sender,
             role: Role.Villager,
-            votes: 0
+            votes: 0,
+            isPaid:false
         });
         players.push(newPlayer);
         playerMap[newPlayer.nickname] = newPlayer;
@@ -178,5 +180,21 @@ contract Lobby {
        }
         
     }
+    }
+
+    function payout() public payable{
+        require(gameFinished,"The game is still going on!!");
+        require(!addresstoplayerMap[msg.sender].isPaid,"You are already paid!!");
+        if(playerCount==0){
+            require(addresstoplayerMap[msg.sender].role==Role.Vampire,"You are not vampire!");
+            payable(msg.sender).transfer(address(this).balance/2);
+            addresstoplayerMap[msg.sender].isPaid=true;
+        }
+        else{
+            require(addresstoplayerMap[msg.sender].role==Role.Villager,"You are not villager!");
+            payable(msg.sender).transfer(address(this).balance/8);
+            addresstoplayerMap[msg.sender].isPaid=true;
+
+        }
     }
 }
