@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { scrollSepolia } from "wagmi/chains";
 import Image from "next/image";
-import { bundlerClient, entryPointContract, getGasPrice,getJoinLobbyData,joinLobbyData } from "@/utils/helpers";
+import { bundlerClient, entryPointContract, getGasPrice,getJoinLobbyData, } from "@/utils/helpers";
 import { readContract } from "wagmi/actions";
-import { AF_ADDRESS, gameAccountFactoryABI } from "@/utils/constants";
+import { AF_ADDRESS, gameAccountFactoryABI, lobbyABI } from "@/utils/constants";
 import { config } from "@/utils/config";
 import { useParams } from "next/navigation";
 import { get } from "http";
 import { Hex } from "viem";
+
 
 const LobiPage = () => {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -18,6 +19,8 @@ const LobiPage = () => {
   const router = useRouter();
   const {address} = useAccount();
   const { id } = useParams();
+
+  
   
   const images = [
     "/kedi.png",
@@ -35,7 +38,7 @@ const LobiPage = () => {
   useEffect(() => {
     getAccount();
   }, []);
-
+  
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -46,18 +49,20 @@ const LobiPage = () => {
     });
     setGameAccount(result);
   }
-  
-  async function StartGame() {
-    useWatchContractEvent({
-      address: "0x",
-      eventName: "",
+
+  const getAccountJoined = async () => {
+    const result = await readContract(config, {
+      abi: lobbyABI,
+      //@ts-ignore
+      address: id,  
+      functionName: "accountToOwner",
       chainId: scrollSepolia.id,
-      abi: [],
-      onLogs(logs) {
-        console.log("New logs!", logs);
-      },
+      args: [gameAccount],
     });
+    console.log(result);
   }
+  
+  
 
   const joinLobby = async (nickName) => {
     let nonce = await (entryPointContract as any).read.getNonce([
