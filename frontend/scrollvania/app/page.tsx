@@ -1,27 +1,57 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useReadContract, useWatchContractEvent } from "wagmi";
 import { config } from "../utils/config";
-import { bundlerClient,getGasPrice,entryPointContract,incrementFuncData } from "../utils/helpers";
+import {
+  bundlerClient,
+  getGasPrice,
+  entryPointContract,
+  incrementFuncData,
+} from "../utils/helpers";
 
 import {
   entryPointABI,
   eventContractABI,
   eventContractAddress,
   gameAccountABI,
+  lobbyFactoryABI,
+  lobbyFactoryAddress,
 } from "../utils/constants";
 import { readContract, writeContract } from "wagmi/actions";
 import { scrollSepolia } from "wagmi/chains";
 import { calculateSenderAddress, factoryData } from "@/utils/helpers";
 import { ENTRYPOINT_ADDRESS_V07 } from "permissionless";
-import { parseEther,Hex } from "viem";
+import { parseEther, Hex } from "viem";
+import { get } from "http";
 
 export default function Home() {
   const [lobbyCode, setLobbyCode] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [lobbies, setLobbies] = useState();
+
+  useEffect(() => {
+    const getLobbies = async () => {
+      const result = await readContract(config, {
+        abi: lobbyFactoryABI,
+        address: lobbyFactoryAddress,
+        functionName: "getDeployedLobbies",
+        chainId: scrollSepolia.id,
+      }) as any;
+
+      setLobbies(result);
+
+    };
+    
+    getLobbies();
+
+  }, []);
+
+  const consoleLobbies = async () => {
+    console.log(lobbies);
+  }
 
   const handleCreateLobby = () => {
     const generatedCode = generateRandomCode();
@@ -78,16 +108,18 @@ export default function Home() {
   };
 
   const incrementOP = async () => {
-    let nonce = await entryPointContract.read.getNonce(["0x581d0b761C28F1daE307A57CCd6e61ebD52c734d", 0]);
+    let nonce = await (entryPointContract as any).read.getNonce([
+      "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
+      0,
+    ]);
     let gasPrice = await getGasPrice();
-    
+
     // const senderAddress = await calculateSenderAddress(factoryData);
 
     const userOperationHash = await bundlerClient.sendUserOperation({
       userOperation: {
         sender: "0x581d0b761C28F1daE307A57CCd6e61ebD52c734d",
         nonce: BigInt(nonce),
-        
         callData: incrementFuncData as Hex,
         maxFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
         maxPriorityFeePerGas: BigInt(gasPrice.fast.maxPriorityFeePerGas),
@@ -185,6 +217,12 @@ export default function Home() {
               onClick={() => incrementOP()}
             >
               Increment
+            </button>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => consoleLobbies()}
+            >
+              Lobbies
             </button>
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
               Join Lobby

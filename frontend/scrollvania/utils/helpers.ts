@@ -34,6 +34,8 @@ import {
   entryPointABI,
   gameAccountFactoryABI,
   gameAccountABI,
+  AF_ADDRESS,
+  
 } from "../utils/constants";
 import dynamic from "next/dynamic";
 import { privateKeyToSimpleSmartAccount } from "permissionless/accounts";
@@ -44,7 +46,7 @@ import { config } from "./config";
 const endpointUrl =
   "https://api.pimlico.io/v2/534351/rpc?apikey=0d1005ee-02d9-4836-810d-27d08cceb39b";
 
-const AF_ADDRESS = "0xaB0BFe7fC32bb98fD6FdeC3755ec3E78A2980121";
+
 
 export const walletClient = createWalletClient({
   chain: gnosisChiado,
