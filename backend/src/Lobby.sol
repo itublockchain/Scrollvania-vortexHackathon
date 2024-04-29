@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "./LobbyFactory.sol";
+//import "./LobbyFactory.sol";
 /*Yapılacaklar
 
     oyları sıfırla - bunu bilmiyorum 
@@ -37,9 +37,10 @@ contract Lobby {
     mapping(string => Player) public playerMap;
     mapping(address => Player) public addresstoplayerMap;
     uint256 public playerCount;
+    uint256 public villagerCount = 8;
     uint256 public voteCount;
     uint256 public vampireCount;
-    LobbyFactory public lobbyFactory= LobbyFactory(0xdC1707b63dC69f36A4a8434C33a5f9228106d1AD);
+    //LobbyFactory public lobbyFactory= LobbyFactory(0xdC1707b63dC69f36A4a8434C33a5f9228106d1AD);
 
     modifier countTime {
         require(block.timestamp <= timeCounter + 40 minutes, "Time has not passed yet");
@@ -47,7 +48,7 @@ contract Lobby {
     }
 
     bool public gunduz = false;
-    HighestVote private highestVote;
+    HighestVote public highestVote;
 
     event vampireFound(string vampireNickname);
     event gameStarted();
@@ -84,7 +85,6 @@ contract Lobby {
             addresstoplayerMap[players[randNum%9].userAddress].role = Role.Vampire;
             players[randNum%9+1].role = Role.Vampire;
             players[randNum%9].role = Role.Vampire;
-            playerCount = 8;
             vampireCount = 2;
             emit gameStarted();
         }
@@ -103,21 +103,19 @@ contract Lobby {
             highestVote.voteNumber = playerMap[target].votes;
             highestVote.playerNickname = target;
         }
-        if(voteCount == playerCount + vampireCount){
+        if(voteCount == villagerCount + vampireCount){
             if(playerMap[highestVote.playerNickname].role == Role.Vampire){
                 vampireCount--;
                 if(vampireCount == 0){
                     gameFinished = true;
-                    lobbyFactory.updateLobbyInfo(address(this),gameFinished);
-                    payout();
+                    //lobbyFactory.updateLobbyInfo(address(this),gameFinished);
                 }
             }
             else{
-                playerCount--;
-                if(playerCount == 0){
+                villagerCount--;
+                if(villagerCount == 0){
                     gameFinished = true;
-                    lobbyFactory.updateLobbyInfo(address(this),gameFinished);
-                    payout();
+                    //lobbyFactory.updateLobbyInfo(address(this),gameFinished);
                 }
             }
 
@@ -126,6 +124,7 @@ contract Lobby {
             }
 
             delete playerMap[highestVote.playerNickname];
+            delete highestVote;
             voteCount = 0;
         timeCounter = block.timestamp;
         gunduz = !gunduz;
@@ -168,27 +167,24 @@ contract Lobby {
             }
 
             delete playerMap[highestVote.playerNickname];
-            for(uint i = 0; i < players.length;i++){
-            playerCount--;
+            villagerCount--;
 
-            if(playerCount == 0){
+            if(villagerCount == 0){
             gameFinished = true;
-            lobbyFactory.updateLobbyInfo(address(this),gameFinished);
-            payout();
+            //lobbyFactory.updateLobbyInfo(address(this),gameFinished);
             }
             voteCount = 0;
+            delete highestVote;
         timeCounter = block.timestamp;
         gunduz = !gunduz;
         emit timeUpdate();
-       }
-        
     }
     }
 
-    function payout() public payable{
+    function payout() public{
         require(gameFinished,"The game is still going on!!");
         require(!addresstoplayerMap[msg.sender].isPaid,"You are already paid!!");
-        if(playerCount==0){
+        if(villagerCount==0){
             require(addresstoplayerMap[msg.sender].role==Role.Vampire,"You are not vampire!");
             payable(msg.sender).transfer(address(this).balance/2);
             addresstoplayerMap[msg.sender].isPaid=true;
