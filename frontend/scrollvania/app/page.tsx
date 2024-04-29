@@ -255,6 +255,9 @@ export default function Home() {
             <button className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl">
               Join Lobby
             </button>
+            
+            <ConnectButton />
+            
           </div>
         </div>
         {/* <h1 className="flex justify-center font-bold text-2xl pt-44">
