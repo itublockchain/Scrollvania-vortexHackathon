@@ -4,7 +4,12 @@ import { useRouter } from "next/navigation";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { scrollSepolia } from "wagmi/chains";
 import Image from "next/image";
-import { bundlerClient, entryPointContract, getGasPrice,getJoinLobbyData, } from "@/utils/helpers";
+import {
+  bundlerClient,
+  entryPointContract,
+  getGasPrice,
+  getJoinLobbyData,
+} from "@/utils/helpers";
 import { readContract } from "wagmi/actions";
 import { AF_ADDRESS, gameAccountFactoryABI, lobbyABI } from "@/utils/constants";
 import { config } from "@/utils/config";
@@ -12,16 +17,15 @@ import { useParams } from "next/navigation";
 import { get } from "http";
 import { Hex } from "viem";
 
-
 const LobiPage = () => {
   const [lobbyCode, setLobbyCode] = useState("");
-  const [gameAccount,setGameAccount] = useState(null);
+  const [gameAccount, setGameAccount] = useState(null);
   const router = useRouter();
-  const {address} = useAccount();
+  const { address } = useAccount();
   const { id } = useParams();
+  const [nickname, setNickname] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(true);
 
-  
-  
   const images = [
     "/kedi.png",
     "/ghost.png",
@@ -38,7 +42,7 @@ const LobiPage = () => {
   useEffect(() => {
     getAccount();
   }, []);
-  
+
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -48,30 +52,29 @@ const LobiPage = () => {
       args: [address],
     });
     setGameAccount(result);
-  }
+  };
 
   const getAccountJoined = async () => {
     const result = await readContract(config, {
       abi: lobbyABI,
       //@ts-ignore
-      address: id,  
+      address: id,
       functionName: "accountToOwner",
       chainId: scrollSepolia.id,
       args: [gameAccount],
     });
     console.log(result);
-  }
-  
-  
+  };
 
   const joinLobby = async (nickName) => {
+    setNickname(nickName);
     let nonce = await (entryPointContract as any).read.getNonce([
       gameAccount,
       0,
     ]);
     let gasPrice = await getGasPrice();
 
-    const joinLobbyData = await getJoinLobbyData(lobbyCode,nickName );
+    const joinLobbyData = await getJoinLobbyData(lobbyCode, nickName);
 
     // const senderAddress = await calculateSenderAddress(factoryData);
 
@@ -102,12 +105,26 @@ const LobiPage = () => {
     console.log(`UserOperation included: ${txHash}`);
   };
 
-
-
-
   return (
     <>
       <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover flex items-center justify-center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const nicknameInput = form.elements.namedItem(
+              "nickname"
+            ) as HTMLInputElement;
+            joinLobby(nicknameInput.value);
+            setIsPopupOpen(false);
+          }}
+        >
+          <label>
+            Nickname:
+            <input type="text" name="nickname" required />
+          </label>
+          <button type="submit">Join Lobby</button>
+        </form>
         <div className="relative w-full flex flex-col items-center">
           <div className="circle">
             {Array(10)
@@ -182,9 +199,7 @@ const LobiPage = () => {
           }
         `}</style>
 
-        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44">
-          
-        </div>
+        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44"></div>
       </div>
     </>
   );
