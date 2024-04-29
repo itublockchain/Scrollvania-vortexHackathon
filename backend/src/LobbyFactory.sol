@@ -4,18 +4,22 @@ pragma solidity ^0.8.13;
 import "./Lobby.sol";
 
 contract LobbyFactory {
-    address[] public deployedLobbies;
     mapping(address => address) public ownerToLobby;
-
+    struct LobbyInfo {
+        address owner;
+        address lobbyAddress;
+        bool gameFinished;
+    }
+    LobbyInfo[] public deployedLobbies;
 
     function createLobby() public {
-        address newLobby = address(new Lobby());
-        deployedLobbies.push(newLobby);
-        ownerToLobby[msg.sender] = newLobby;
+        Lobby newLobby = new Lobby();
+
+        deployedLobbies.push(LobbyInfo(msg.sender, address(newLobby), false));
+        ownerToLobby[msg.sender] = address(newLobby);
     }
 
-
-    function getDeployedLobbies() public view returns (address[] memory) {
+    function getDeployedLobbies() public view returns (LobbyInfo[] memory) {
         return deployedLobbies;
     }
 }
