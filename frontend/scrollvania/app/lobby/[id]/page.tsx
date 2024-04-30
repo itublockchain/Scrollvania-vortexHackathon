@@ -18,7 +18,7 @@ import { AF_ADDRESS, gameAccountFactoryABI, lobbyABI } from "@/utils/constants";
 import { config } from "@/utils/config";
 import { useParams } from "next/navigation";
 import { get } from "http";
-import { formatUnits, Hex } from "viem";
+import { Hex } from "viem";
 
 const LobiPage = () => {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -71,13 +71,13 @@ const LobiPage = () => {
       functionName: "playerCount",
       chainId: scrollSepolia.id,
     });
-    return result
+    setPlayerCount(result as any);
   };
-   console.log(playerCount);
+
   const getAccountJoined = async () => {
 
-    const playerCount =await getPlayerCount();
-    for (let i = 0; i < Number(playerCount); i++) {
+    await getPlayerCount();
+    for (let i = 0; i < playerCount; i++) {
       const result = await readContract(config, {
         abi: lobbyABI,
 
@@ -86,9 +86,9 @@ const LobiPage = () => {
         chainId: scrollSepolia.id,
         args: [i],
       });
-      
+      if (result === gameAccount) {
         setJoinedAccount(result as any);
-      
+      }
     }
   };
 
@@ -247,23 +247,34 @@ const LobiPage = () => {
   return (
     <>
       <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover flex items-center justify-center">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const nicknameInput = form.elements.namedItem(
-              "nickname"
-            ) as HTMLInputElement;
-            joinLobby(nicknameInput.value);
-            setIsPopupOpen(false);
-          }}
-        >
-          <label>
-            Nickname:
-            <input type="text" name="nickname" required />
-          </label>
-          <button type="submit">Join Lobby</button>
-        </form>
+      {isPopupOpen && (
+          <>
+            <div className="fixed inset-0 bg-black opacity-50 z-10 "></div>
+            <form
+              className="bg-white p-8 space-y-4 rounded-4xl flex flex-col items-center rounded-3xl justify-center opacity-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const nicknameInput = form.elements.namedItem(
+                  "nickname"
+                ) as HTMLInputElement;
+                joinLobby(nicknameInput.value);
+                setIsPopupOpen(false);
+              }}
+            >
+              <label>
+                Nickname:
+                <input
+                  className=" bg-slate-400 rounded-3xl border-black border-2 ml-4 "
+                  type="text"
+                  name="nickname"
+                  required
+                />
+              </label>
+              <button className="bg-slate-600 opacity-80 w-44 h-8 hover:bg-purple-600 text-black text-center items-center justify-center flex  py-2 px-4 rounded-3xl" type="submit">Join Lobby</button>
+            </form>
+          </>
+        )}
         <button onClick={() => consoleJoinedAccount()}>BAAAAAs</button>
         <div className="relative w-full flex flex-col items-center">
           <div className="circle">

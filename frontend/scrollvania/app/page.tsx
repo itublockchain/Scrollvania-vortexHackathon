@@ -258,7 +258,8 @@ export default function Home() {
             className="flex flex-col pt-[171px]"
           />
 
-          <div className="flex flex-col justify-center items-center space-y-28">
+          <div className="flex flex-col justify-center items-center space-y-16">
+          <ConnectButton />
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => setShowPopup(true)}
@@ -271,12 +272,12 @@ export default function Home() {
             >
               Connect Wallet
             </button> */}
-            <button
+            {/* <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleSenderAddress()}
             >
               Sender Address
-            </button>
+            </button> */}
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => fundEntryPoint()}
@@ -302,28 +303,28 @@ export default function Home() {
               CreateLobby
             </button>
 
-            <button
+            {/* <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleCount()}
             >
               Count
-            </button>
-            <button
+            </button> */}
+            {/* <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => incrementOP()}
             >
               Increment
-            </button>
+            </button> */}
             
-            <button
+            {/* <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
               onClick={() => consoleAccount()}
             >
               Account
-            </button>
+            </button> */}
            
             
-            <ConnectButton />
+          
             
           </div>
         </div>
