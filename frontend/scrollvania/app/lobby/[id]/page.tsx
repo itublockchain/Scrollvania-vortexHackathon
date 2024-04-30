@@ -48,24 +48,35 @@ const LobiPage = () => {
   useEffect(() => {
     getAccount();
     getAccountJoined();
-  }, []);
-
-  const consoleJoinedAccount = async () => {
-    console.log(joinedAccount);
-  };
-
-  const [nickname, setNickname] = useState(() => {
-    // Get the nickname from local storage if it exists
-    const storedNickname = window.localStorage.getItem('nickname');
+    const localD = async () => {
+    const storedNickname = window.localStorage.getItem(gameAccount);
     if (storedNickname) {
       // If the nickname is stored, don't show the popup
       setIsPopupOpen(false);
       return storedNickname;
     }
     // If the nickname is not stored, show the popup
-    setIsPopupOpen(true);
-    return "";
-  });
+    setIsPopupOpen(true); 
+    return "";}
+    localD();
+  }, []);
+
+  const consoleJoinedAccount = async () => {
+    console.log(joinedAccount);
+  };
+
+  // const [nickname, setNickname] = useState(() => {
+  //   // Get the nickname from local storage if it exists
+  //   const storedNickname = window.localStorage.getItem(gameAccount);
+  //   if (storedNickname) {
+  //     // If the nickname is stored, don't show the popup
+  //     setIsPopupOpen(false);
+  //     return storedNickname;
+  //   }
+  //   // If the nickname is not stored, show the popup
+  //   setIsPopupOpen(true); 
+  //   return "";
+  // });
 
   const getAccount = async () => {
     const result = await readContract(config, {
@@ -110,7 +121,7 @@ const LobiPage = () => {
       gameAccount,
       0,
     ]);
-    window.localStorage.setItem('nickname', nickName);
+    window.localStorage.setItem(gameAccount, nickName);
     let gasPrice = await getGasPrice();
 
     const joinLobbyData = await getJoinLobbyData(id, nickName);
