@@ -227,7 +227,7 @@ export default function Home() {
           Welcome to Scrollvania
         </h3>
         <div className="flex flex-row justify-evenly items-center ">
-          <div className="w-[700px] h-[500px] bg-white rounded-3xl opacity-80 flex flex-col">
+          <div className="w-[500px] h-[500px] bg-white rounded-3xl opacity-80 flex flex-col">
             {lobbies &&
               lobbies.map((lobby, index) => {
                 return (
@@ -237,14 +237,10 @@ export default function Home() {
                   >
                     <div
                       key={index}
-                      className="flex flex-row justify-between p-2"
+                      className="flex flex-row justify-center items-center text-center p-2 space-y-3"
                     >
-                      <p>Join Lobby </p>
-                      <p>
-                        {lobby.gameFinished
-                          ? "Oyun Bitti"
-                          : "Oyun Devam Ediyor"}
-                      </p>
+                      <p className="flex justify-center items-center text-center text-3xl font-bold">Join Lobby </p>
+                      
                     </div>
                   </Link>
                 );
