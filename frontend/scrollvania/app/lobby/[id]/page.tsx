@@ -30,6 +30,7 @@ const LobiPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(true);
   const [joinedAccount, setJoinedAccount] = useState();
   const [playerCount, setPlayerCount] = useState(0);
+  const [results, setResults] = useState([]);
   console.log(address);
   const images = [
     "/kedi.png",
@@ -48,9 +49,13 @@ const LobiPage = () => {
     getAccount();
     getAccountJoined();
   }, []);
+
   const consoleJoinedAccount = async () => {
     console.log(joinedAccount);
   };
+
+  console.log(results);
+
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -88,6 +93,7 @@ const LobiPage = () => {
       });
       if (result === gameAccount) {
         setJoinedAccount(result as any);
+        setResults(prev => [...prev, result]);
       }
     }
   };
@@ -350,7 +356,9 @@ const LobiPage = () => {
           }
         `}</style>
 
-        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44"></div>
+        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44">
+          
+        </div>
       </div>
     </>
   );
