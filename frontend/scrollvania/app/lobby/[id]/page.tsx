@@ -29,7 +29,8 @@ const LobiPage = () => {
   const [nickname, setNickname] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(true);
   const [joinedAccount, setJoinedAccount] = useState();
-  console.log(address)
+  const [playerCount, setPlayerCount] = useState(0);
+  console.log(address);
   const images = [
     "/kedi.png",
     "/ghost.png",
@@ -49,7 +50,7 @@ const LobiPage = () => {
   }, []);
   const consoleJoinedAccount = async () => {
     console.log(joinedAccount);
-  }
+  };
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -60,18 +61,35 @@ const LobiPage = () => {
     });
     setGameAccount(result);
   };
-  console.log(gameAccount)
-  const getAccountJoined = async () => {
-    
+  console.log(gameAccount);
+
+  const getPlayerCount = async () => {
     const result = await readContract(config, {
       abi: lobbyABI,
-      
+
       address: `${id}`,
-      functionName: "players",
+      functionName: "playerCount",
       chainId: scrollSepolia.id,
-      args: [0],
     });
-    setJoinedAccount(result as any);
+    setPlayerCount(result as any);
+  };
+
+  const getAccountJoined = async () => {
+
+    await getPlayerCount();
+    for (let i = 0; i < playerCount; i++) {
+      const result = await readContract(config, {
+        abi: lobbyABI,
+
+        address: `${id}`,
+        functionName: "players",
+        chainId: scrollSepolia.id,
+        args: [i],
+      });
+      if (result === gameAccount) {
+        setJoinedAccount(result as any);
+      }
+    }
   };
 
   const joinLobby = async (nickName) => {
@@ -98,7 +116,6 @@ const LobiPage = () => {
         callGasLimit: BigInt(1_000_000),
         verificationGasLimit: BigInt(1_000_000),
         preVerificationGas: BigInt(1_000_000),
-        
       },
     });
 
@@ -190,7 +207,6 @@ const LobiPage = () => {
     console.log(`UserOperation included: ${txHash}`);
   };
   const payout = async (nickName) => {
-    
     let nonce = await (entryPointContract as any).read.getNonce([
       gameAccount,
       0,
@@ -248,7 +264,7 @@ const LobiPage = () => {
           </label>
           <button type="submit">Join Lobby</button>
         </form>
-        <button onClick={()=>consoleJoinedAccount()}>BAAAAAs</button>
+        <button onClick={() => consoleJoinedAccount()}>BAAAAAs</button>
         <div className="relative w-full flex flex-col items-center">
           <div className="circle">
             {Array(10)
@@ -275,7 +291,6 @@ const LobiPage = () => {
               />
             </div> */}
           </div>
-
         </div>
 
         <style jsx>{`
