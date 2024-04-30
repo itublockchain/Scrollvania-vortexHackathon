@@ -55,8 +55,10 @@ contract Lobby {
     event murdered(string victim);
     event Dispacth(string suspect);
 
-    
-
+    function getPlayers() public view returns(Player[] memory){
+        return players;
+    }
+   
     function joinLobby(
         string memory _nickName
     ) external payable {

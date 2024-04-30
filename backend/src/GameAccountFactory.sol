@@ -19,7 +19,6 @@ contract GameAccountFactory {
         accounts.push(address(account));
         ownerToAccount[owner] = address(account);
         hasAccount[owner] = true;
-
         return address(account);
     }
 }
