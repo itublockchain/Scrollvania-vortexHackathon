@@ -28,7 +28,7 @@ const LobiPage = () => {
   const { id } = useParams();
   const [nickname, setNickname] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(true);
-  const [joinedAccount, setJoinedAccount] = useState();
+  const [joinedAccount, setJoinedAccount] = useState([]);
   const [playerCount, setPlayerCount] = useState(0);
   const [results, setResults] = useState([]);
   console.log(address);
@@ -54,8 +54,6 @@ const LobiPage = () => {
     console.log(joinedAccount);
   };
 
-  
-
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -66,7 +64,6 @@ const LobiPage = () => {
     });
     setGameAccount(result);
   };
-  
 
   const getPlayerCount = async () => {
     const result = await readContract(config, {
@@ -289,8 +286,12 @@ const LobiPage = () => {
               .map((_, index) => (
                 <div
                   key={index}
-                  className="w-24 h-24 rounded-full bg-white item flex justify-center items-center ml-[550px]"
+                  className="w-24 h-24 rounded-full bg-white item flex justify-center items-center ml-[550px] relative"
                 >
+                  <div className="absolute bottom-full text-center w-full text-white font-fold">
+                  {joinedAccount[index]?.nickname}
+                  </div>
+
                   <Image
                     src={images[index]}
                     alt={`Picture ${index + 1}`}
@@ -299,14 +300,6 @@ const LobiPage = () => {
                   />
                 </div>
               ))}
-            {/* <div className="">
-              <Image
-                src={"/vampire.png"}
-                alt="vampire"
-                width={300}
-                height={300}
-              />
-            </div> */}
           </div>
         </div>
 
