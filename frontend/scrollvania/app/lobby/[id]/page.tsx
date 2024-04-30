@@ -26,7 +26,7 @@ const LobiPage = () => {
   const router = useRouter();
   const { address } = useAccount();
   const { id } = useParams();
-  const [nickname, setNickname] = useState("");
+  // const [nickname, setNickname] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(true);
   const [joinedAccount, setJoinedAccount] = useState([]);
   const [playerCount, setPlayerCount] = useState(0);
@@ -53,6 +53,19 @@ const LobiPage = () => {
   const consoleJoinedAccount = async () => {
     console.log(joinedAccount);
   };
+
+  const [nickname, setNickname] = useState(() => {
+    // Get the nickname from local storage if it exists
+    const storedNickname = window.localStorage.getItem('nickname');
+    if (storedNickname) {
+      // If the nickname is stored, don't show the popup
+      setIsPopupOpen(false);
+      return storedNickname;
+    }
+    // If the nickname is not stored, show the popup
+    setIsPopupOpen(true);
+    return "";
+  });
 
   const getAccount = async () => {
     const result = await readContract(config, {
@@ -90,12 +103,14 @@ const LobiPage = () => {
     setJoinedAccount(result as any);
   };
   console.log(joinedAccount);
+
   const joinLobby = async (nickName) => {
     setNickname(nickName);
     let nonce = await (entryPointContract as any).read.getNonce([
       gameAccount,
       0,
     ]);
+    window.localStorage.setItem('nickname', nickName);
     let gasPrice = await getGasPrice();
 
     const joinLobbyData = await getJoinLobbyData(id, nickName);
@@ -278,7 +293,7 @@ const LobiPage = () => {
             </form>
           </>
         )}
-        <button onClick={() => consoleJoinedAccount()}>BAAAAAs</button>
+        {/* <button onClick={() => consoleJoinedAccount()}>BAAAAAs</button> */}
         <div className="relative w-full flex flex-col items-center">
           <div className="circle">
             {Array(10)
@@ -289,7 +304,7 @@ const LobiPage = () => {
                   className="w-24 h-24 rounded-full bg-white item flex justify-center items-center ml-[550px] relative"
                 >
                   <div className="absolute bottom-full text-center w-full text-white font-fold">
-                  {joinedAccount[index]?.nickname}
+                    {joinedAccount[index]?.nickname}
                   </div>
 
                   <Image
@@ -349,7 +364,19 @@ const LobiPage = () => {
           }
         `}</style>
 
-        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44"></div>
+        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44 space-y-3">
+          {joinedAccount &&
+            joinedAccount.map((nickname, index) => {
+              return (
+                <div
+                  className="flex justify-center items-center text-center text-black font-bold "
+                  key={index}
+                >
+                  {joinedAccount[index]?.nickname}
+                </div>
+              );
+            })}
+        </div>
       </div>
     </>
   );
