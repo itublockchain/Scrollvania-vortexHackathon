@@ -54,7 +54,7 @@ const LobiPage = () => {
     console.log(joinedAccount);
   };
 
-  console.log(results);
+  
 
   const getAccount = async () => {
     const result = await readContract(config, {
@@ -66,7 +66,7 @@ const LobiPage = () => {
     });
     setGameAccount(result);
   };
-  console.log(gameAccount);
+  
 
   const getPlayerCount = async () => {
     const result = await readContract(config, {
@@ -80,24 +80,19 @@ const LobiPage = () => {
   };
 
   const getAccountJoined = async () => {
-
     await getPlayerCount();
-    for (let i = 0; i < playerCount; i++) {
-      const result = await readContract(config, {
-        abi: lobbyABI,
 
-        address: `${id}`,
-        functionName: "players",
-        chainId: scrollSepolia.id,
-        args: [i],
-      });
-      if (result === gameAccount) {
-        setJoinedAccount(result as any);
-        setResults(prev => [...prev, result]);
-      }
-    }
+    const result = await readContract(config, {
+      abi: lobbyABI,
+
+      address: `${id}`,
+      functionName: "getPlayers",
+      chainId: scrollSepolia.id,
+    });
+
+    setJoinedAccount(result as any);
   };
-
+  console.log(joinedAccount);
   const joinLobby = async (nickName) => {
     setNickname(nickName);
     let nonce = await (entryPointContract as any).read.getNonce([
@@ -253,7 +248,7 @@ const LobiPage = () => {
   return (
     <>
       <div className="min-h-screen bg-[url('/bgImage.png')] bg-center bg-cover flex items-center justify-center">
-      {isPopupOpen && (
+        {isPopupOpen && (
           <>
             <div className="fixed inset-0 bg-black opacity-50 z-10 "></div>
             <form
@@ -277,7 +272,12 @@ const LobiPage = () => {
                   required
                 />
               </label>
-              <button className="bg-slate-600 opacity-80 w-44 h-8 hover:bg-purple-600 text-black text-center items-center justify-center flex  py-2 px-4 rounded-3xl" type="submit">Join Lobby</button>
+              <button
+                className="bg-slate-600 opacity-80 w-44 h-8 hover:bg-purple-600 text-black text-center items-center justify-center flex  py-2 px-4 rounded-3xl"
+                type="submit"
+              >
+                Join Lobby
+              </button>
             </form>
           </>
         )}
@@ -356,9 +356,7 @@ const LobiPage = () => {
           }
         `}</style>
 
-        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44">
-          
-        </div>
+        <div className="bg-white opacity-80 w-96 h-96 rounded-3xl absolute right-44"></div>
       </div>
     </>
   );

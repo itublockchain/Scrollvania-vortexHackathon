@@ -1,6 +1,6 @@
 export const eventContractAddress ="0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
-export const lobbyFactoryAddress = "0x6c1a3E8840af081968Be1c739cA414579FA176B4";
-export const AF_ADDRESS = "0xB6580c0A7fDCf97044C6d8052116e934a5F748AF";
+export const lobbyFactoryAddress = "0x03ec1EfC1f3811939cb7405979F99C490Dd8b196";
+export const AF_ADDRESS = "0x87c34AEA223245362F8B8ba9066ff1C4aFe63303";
 
 export const eventContractABI = [
   {
@@ -1065,6 +1065,34 @@ export const lobbyABI = [
     "name": "gameFinished",
     "inputs": [],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPlayers",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct Lobby.Player[]",
+        "components": [
+          { "name": "nickname", "type": "string", "internalType": "string" },
+          {
+            "name": "userAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "role",
+            "type": "uint8",
+            "internalType": "enum Lobby.Role"
+          },
+          { "name": "votes", "type": "uint256", "internalType": "uint256" },
+          { "name": "isPaid", "type": "bool", "internalType": "bool" }
+        ]
+      }
+    ],
     "stateMutability": "view"
   },
   {
