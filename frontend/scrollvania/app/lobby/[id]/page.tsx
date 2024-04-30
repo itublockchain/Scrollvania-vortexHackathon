@@ -18,7 +18,7 @@ import { AF_ADDRESS, gameAccountFactoryABI, lobbyABI } from "@/utils/constants";
 import { config } from "@/utils/config";
 import { useParams } from "next/navigation";
 import { get } from "http";
-import { Hex } from "viem";
+import { formatUnits, Hex } from "viem";
 
 const LobiPage = () => {
   const [lobbyCode, setLobbyCode] = useState("");
@@ -71,13 +71,13 @@ const LobiPage = () => {
       functionName: "playerCount",
       chainId: scrollSepolia.id,
     });
-    setPlayerCount(result as any);
+    return result
   };
-
+   console.log(playerCount);
   const getAccountJoined = async () => {
 
-    await getPlayerCount();
-    for (let i = 0; i < playerCount; i++) {
+    const playerCount =await getPlayerCount();
+    for (let i = 0; i < Number(playerCount); i++) {
       const result = await readContract(config, {
         abi: lobbyABI,
 
@@ -86,9 +86,9 @@ const LobiPage = () => {
         chainId: scrollSepolia.id,
         args: [i],
       });
-      if (result === gameAccount) {
+      
         setJoinedAccount(result as any);
-      }
+      
     }
   };
 
