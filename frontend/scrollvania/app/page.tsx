@@ -99,7 +99,16 @@ export default function Home() {
 
 
 
-  
+  const fundAccount = async () => {
+    const result = await writeContract(config, {
+      abi: gameAccountABI,
+      address: gameAccount,
+      functionName: "fundMe",
+      chainId: scrollSepolia.id,
+      value: parseEther("0.01"),
+    });
+    console.log(result);
+  }
 
   const fundEntryPoint = async () => {
     const result = await writeContract(config, {
@@ -273,6 +282,12 @@ export default function Home() {
               onClick={() => fundEntryPoint()}
             >
               FundMe
+            </button>
+            <button
+              className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"
+              onClick={() => fundAccount()}
+            >
+              FundAccount
             </button>
             <button
               className="bg-white opacity-80 w-96 h-16 hover:bg-purple-600 text-black font-bold text-3xl py-2 px-4 rounded-3xl"

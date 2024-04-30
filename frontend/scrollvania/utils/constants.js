@@ -1,6 +1,6 @@
 export const eventContractAddress ="0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
-export const lobbyFactoryAddress = "0x1d0Fc961901BA4DA919a72220E5aF5F6b2c07709";
-export const AF_ADDRESS = "0x3635B6D0b150d438163EAF7417812feBC4030f2c";
+export const lobbyFactoryAddress = "0x6c1a3E8840af081968Be1c739cA414579FA176B4";
+export const AF_ADDRESS = "0xB6580c0A7fDCf97044C6d8052116e934a5F748AF";
 
 export const eventContractABI = [
   {
@@ -841,6 +841,13 @@ export const gameAccountABI = [
   },
   {
     "type": "function",
+    "name": "fundMe",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
     "name": "increment",
     "inputs": [],
     "outputs": [],
@@ -858,7 +865,7 @@ export const gameAccountABI = [
       { "name": "nickName", "type": "string", "internalType": "string" }
     ],
     "outputs": [],
-    "stateMutability": "nonpayable"
+    "stateMutability": "payable"
   },
   {
     "type": "function",

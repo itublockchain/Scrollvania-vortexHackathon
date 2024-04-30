@@ -28,7 +28,8 @@ const LobiPage = () => {
   const { id } = useParams();
   const [nickname, setNickname] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(true);
-
+  const [joinedAccount, setJoinedAccount] = useState();
+  console.log(address)
   const images = [
     "/kedi.png",
     "/ghost.png",
@@ -44,8 +45,11 @@ const LobiPage = () => {
 
   useEffect(() => {
     getAccount();
+    getAccountJoined();
   }, []);
-
+  const consoleJoinedAccount = async () => {
+    console.log(joinedAccount);
+  }
   const getAccount = async () => {
     const result = await readContract(config, {
       abi: gameAccountFactoryABI,
@@ -56,17 +60,18 @@ const LobiPage = () => {
     });
     setGameAccount(result);
   };
-
+  console.log(gameAccount)
   const getAccountJoined = async () => {
+    
     const result = await readContract(config, {
       abi: lobbyABI,
-      //@ts-ignore
-      address: id,
-      functionName: "accountToOwner",
+      
+      address: `${id}`,
+      functionName: "players",
       chainId: scrollSepolia.id,
-      args: [gameAccount],
+      args: [0],
     });
-    console.log(result);
+    setJoinedAccount(result as any);
   };
 
   const joinLobby = async (nickName) => {
@@ -93,6 +98,7 @@ const LobiPage = () => {
         callGasLimit: BigInt(1_000_000),
         verificationGasLimit: BigInt(1_000_000),
         preVerificationGas: BigInt(1_000_000),
+        
       },
     });
 
@@ -242,6 +248,7 @@ const LobiPage = () => {
           </label>
           <button type="submit">Join Lobby</button>
         </form>
+        <button onClick={()=>consoleJoinedAccount()}>BAAAAAs</button>
         <div className="relative w-full flex flex-col items-center">
           <div className="circle">
             {Array(10)
@@ -268,6 +275,7 @@ const LobiPage = () => {
               />
             </div> */}
           </div>
+
         </div>
 
         <style jsx>{`

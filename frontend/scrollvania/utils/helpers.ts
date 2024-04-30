@@ -99,16 +99,17 @@ export const factoryContract = getContract({
 // HELPER FUNCTIONS
 export const getJoinLobbyData = async (lobbyAddress,nickName) => {
   const joinLobbyData = encodeFunctionData({
-    abi: lobbyABI,
+    abi: gameAccountABI,
     functionName: "joinLobby",
     args: [lobbyAddress,nickName],
+    
   });
   return joinLobbyData;
 
 }
 export const getKillData = async (lobbyAddress,nickName) => {
   const killData = encodeFunctionData({
-    abi: lobbyABI,
+    abi: gameAccountABI,
     functionName: "kill",
     args: [lobbyAddress,nickName],
   });
@@ -117,7 +118,7 @@ export const getKillData = async (lobbyAddress,nickName) => {
 }
 export const getVoteData = async (lobbyAddress,nickName) => {
   const voteData = encodeFunctionData({
-    abi: lobbyABI,
+    abi: gameAccountABI,
     functionName: "vote",
     args: [lobbyAddress,nickName],
   });
@@ -126,7 +127,7 @@ export const getVoteData = async (lobbyAddress,nickName) => {
 }
 export const getPayoutData = async (lobbyAddress) => {
   const payoutData = encodeFunctionData({
-    abi: lobbyABI,
+    abi: gameAccountABI,
     functionName: "vote",
     args: [lobbyAddress],
   });
